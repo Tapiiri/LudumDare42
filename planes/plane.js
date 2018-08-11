@@ -1,74 +1,75 @@
-function createPlayer(position) {
-  const playerGraphics = new createjs.Shape();
-    playerGraphics.graphics
-      .beginFill('Green')
-      .beginStroke('#000000')
-      .mt(0, -70)
-      .lt(50, 30)
-      .lt(-50, 30)
-      .lt(0, -70)
-      .beginFill('Red')
-      .drawCircle(0, 0, 10);
-    playerGraphics.x = 0;
-    playerGraphics.y = 0;
-  return {
-    collision: {
+
+class Plane {
+  constructor(position) {
+    this.graphics = new createjs.Shape();
+    this.graphics.graphics
+    .beginFill('Green')
+    .beginStroke('#000000')
+    .mt(0, -70)
+    .lt(50, 30)
+    .lt(-50, 30)
+    .lt(0, -70)
+    .beginFill('Red')
+    .drawCircle(0, 0, 10);
+    this.graphics.x = position.x;
+    this.graphics.y = position.y;
+    
+    this.collision = {
       type: "CIRCLE",
       collisionRadius: 10,
-      x: position.x,
-      y: position.y,
-    },
-    graphics: playerGraphics,
-    position,
-    onTick: (ev, self) => {
-      applyAngularVelocity(self, ev.delta);
-      self.graphics.rotation = radToDeg(self.rotation);
+      pos: position
+    }
 
-      // drag ~ velocity squared
-      const dragCoefficient = 0.005;
-      const dragMagnitude = -(self.velocity.toPolar().r ** 2 * dragCoefficient)
-      const drag = self.velocity.unit().scalarMult(dragMagnitude);
-      self.acceleration = Vector.fromPolar(
-        self.accelerationMagnitude,
-        self.rotation,
-      ).add(drag);
-    },
-    init: (self) => {
-      const defaultAcceleration = 10;
-      const boostAcceleration = 100;
-      self.accelerationMagnitude = defaultAcceleration;
-      const angularVelocity = Math.PI;
+    const defaultAcceleration = 10;
+    const boostAcceleration = 100;
+    this.accelerationMagnitude = defaultAcceleration;
+    const angularVelocity = Math.PI;
 
-      document.addEventListener('keydown', (ev) => {
+    document.addEventListener('keydown', (ev) => {
+      switch (ev.key) {
+      case 'ArrowLeft':
+        this.angularVelocity = angularVelocity;
+        break;
+      case 'ArrowRight':
+        this.angularVelocity = -angularVelocity;
+        break;
+      case 'ArrowUp':
+        this.accelerationMagnitude = boostAcceleration;
+        break;
+      }
+    });
+    document.addEventListener('keyup', (ev) => {
         switch (ev.key) {
         case 'ArrowLeft':
-          self.angularVelocity = angularVelocity;
-          break;
         case 'ArrowRight':
-          self.angularVelocity = -angularVelocity;
+          this.angularVelocity = 0;
           break;
         case 'ArrowUp':
-          self.accelerationMagnitude = boostAcceleration;
+          this.accelerationMagnitude = defaultAcceleration;
           break;
         }
-      });
-      document.addEventListener('keyup', (ev) => {
-          switch (ev.key) {
-          case 'ArrowLeft':
-          case 'ArrowRight':
-            self.angularVelocity = 0;
-            break;
-          case 'ArrowUp':
-            self.accelerationMagnitude = defaultAcceleration;
-            break;
-          }
-      });
-    },
-    gravity: true,
-    velocity: new Vector(0, -10),
-    acceleration: new Vector(0, 0),
-    rotation: 0, // radians, 0 towards the right, grows counterclockwise
-    angularVelocity: 0,
-    accelerationMagnitude: undefined,
-  };
-};
+    });
+
+    this.gravity = true
+    this.velocity = new Vector(0, -10)
+    this.acceleration = new Vector(0, 0)
+    this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
+    this.angularVelocity = 0
+    this.accelerationMagnitude = 100
+  }
+
+  onTick(ev) {
+    console.log("tikking", this.collision.pos, this.velocity, this.acceleration)
+    applyAngularVelocity(this, ev.delta);
+    this.graphics.rotation = radToDeg(this.rotation);
+
+    // drag ~ velocity squared
+    const dragCoefficient = 0.005;
+    const dragMagnitude = -(this.velocity.toPolar().r ** 2 * dragCoefficient)
+    const drag = this.velocity.unit().scalarMult(dragMagnitude);
+    this.acceleration = Vector.fromPolar(
+      this.accelerationMagnitude,
+      this.rotation,
+    ).add(drag);
+  }
+}
