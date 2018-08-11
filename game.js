@@ -1,16 +1,3 @@
-const KEYCODE_ENTER = 13; //useful keycode
-const KEYCODE_SPACE = 32; //useful keycode
-const KEYCODE_UP = 38; //useful keycode
-const KEYCODE_LEFT = 37; //useful keycode
-const KEYCODE_RIGHT = 39; //useful keycode
-const KEYCODE_DOWN = 40;
-const KEYCODE_W = 87; //useful keycode
-const KEYCODE_A = 65; //useful keycode
-const KEYCODE_D = 68; //useful keycode
-
-document.onkeydown = handleKeyDown;
-document.onkeyup = handleKeyUp;
-
 function init() {
   const stageCanvas = document.getElementById('demoCanvas');
   const resize = () => {
@@ -24,12 +11,18 @@ function init() {
   /* gameObject contains:
    *   graphics - EaselJS DisplayObject
    *   onTick - function (tick event, this gameObject)
+   *   init - (optional) function (this gameObject)
    *   gravity - Boolean whether to apply gravity
    *   velocity - {x, y} in pixels per second
+   *   acceleration - {x, y} in pixels/s^2
+   *   maxVelocity - {maxX, maxY, minX, minY} in pixels/s^2
    *   hitbox - ???
    */
   const gameObjects = [];
   function addGameObject(go) {
+    if (typeof go.init === 'function') {
+      go.init(go);
+    }
     stage.addChild(go.graphics);
     gameObjects.push(go);
   }
@@ -54,9 +47,42 @@ function init() {
       y: 100,
     },
     graphics: playerGraphics,
-    onTick: (ev, self) => (self.graphics.x += 5 * Math.sin(0.005 * ev.time)),
+    onTick: (ev, self) => ({}),
+    init: (self) => {
+      const acceleration = 120;
+      document.addEventListener('keydown', (ev) => {
+        switch (ev.key) {
+        case 'ArrowLeft':
+          self.acceleration.x -= acceleration;
+          break;
+        case 'ArrowRight':
+          self.acceleration.x += acceleration;
+          break;
+        case 'ArrowUp':
+          self.acceleration.y -= acceleration;
+          break;
+        case 'ArrowDown':
+          self.acceleration.y += acceleration;
+          break;
+        }
+      });
+      document.addEventListener('keyup', (ev) => {
+        switch (ev.key) {
+        case 'ArrowLeft':
+        case 'ArrowRight':
+          self.acceleration.x = 0;
+          break;
+        case 'ArrowUp':
+        case 'ArrowDown':
+          self.acceleration.y = 0;
+          break;
+        }
+      });
+    },
     gravity: true,
-    velocity: { x: 0, y: -100 }
+    velocity: { x: 0, y: -10 },
+    acceleration: { x: 0, y: 0 },
+    maxVelocity: { maxX: 50, minX: -50, maxY: 200, minY: -200 },
   };
   addGameObject(player);
 
@@ -67,7 +93,9 @@ function init() {
   const ground = {
     graphics: groundGraphics,
     onTick: (ev, self) => ({}),
-    velocity: { x: 0, y: 0 }
+    velocity: { x: 0, y: 0 },
+    acceleration: { x: 0, y: 0 },
+    maxVelocity: { maxX: 0, minX: 0, maxY: 0, minY: 0 },
   };
   addGameObject(ground);
 
@@ -99,7 +127,9 @@ function init() {
         self.velocity.y += 5 * Math.cos(0.005 * ev.time);
       },
       gravity: false,
-      velocity: { x: 10, y: 10 }
+      velocity: { x: 10, y: 10 },
+      acceleration: { x: 0, y: 0 },
+      maxVelocity: { maxX: 20, minX: -20, maxY: 20, minY: -20 },
     };
     addGameObject(enemyObject);
   });
@@ -107,7 +137,7 @@ function init() {
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
     gameObjects.forEach(go => {
-      applyGravity(go, ev.delta);
+      applyAcceleration(go, ev.delta);
       applyVelocity(go, ev.delta);
       go.onTick(ev, go);
     });
@@ -117,14 +147,29 @@ function init() {
   stage.add;
 }
 
-function applyGravity(go, deltaT) {
-  const gravityAccelerationY = 98.1; // pixels / s^2
+function applyAcceleration(go, deltaT) {
+  const gravityAccelerationY = 100; // pixels / s^2
   if (go.gravity) {
     go.velocity.y += (gravityAccelerationY * deltaT) / 1000;
   }
+  go.velocity.x += (go.acceleration.x * deltaT) / 1000;
+  go.velocity.y += (go.acceleration.y * deltaT) / 1000;
 }
 
 function applyVelocity(go, deltaT) {
+  if (go.velocity.x > go.maxVelocity.maxX) {
+    go.velocity.x = go.maxVelocity.maxX;
+    go.acceleration.x = 0;
+  } else if (go.velocity.x < go.maxVelocity.minX) {
+    go.velocity.x = go.maxVelocity.minX;
+    go.acceleration.x = 0;
+  } else if (go.velocity.y > go.maxVelocity.maxY) {
+    go.velocity.y = go.maxVelocity.maxY;
+    go.acceleration.y = 0;
+  } else if (go.velocity.y < go.maxVelocity.minY) {
+    go.velocity.y = go.maxVelocity.minY;
+    go.acceleration.y = 0;
+  }
   go.graphics.x += (go.velocity.x * deltaT) / 1000;
   go.graphics.y += (go.velocity.y * deltaT) / 1000;
 }
@@ -147,36 +192,4 @@ function RectCircleColliding(circ,rect){
   const dx=distX-rect.w/2;
   const dy=distY-rect.h/2;
   return (dx*dx+dy*dy<=(circ.collisionRadius*circ.collisionRadius));
-}
-
-function handleKeyDown(e) {
-  if (!e) {
-    var e = window.event;
-  }
-  switch (e.keyCode) {
-    case KEYCODE_LEFT:
-      return false;
-    case KEYCODE_RIGHT:
-      return false;
-    case KEYCODE_UP:
-      return false;
-    case KEYCODE_DOWN:
-      return false;
-  }
-}
-
-function handleKeyUp(e) {
-  if (!e) {
-    var e = window.event;
-  }
-  switch (e.keyCode) {
-    case KEYCODE_LEFT:
-      return false;
-    case KEYCODE_RIGHT:
-      return false;
-    case KEYCODE_UP:
-      return false;
-    case KEYCODE_DOWN:
-      return false;
-  }
 }
