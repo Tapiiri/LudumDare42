@@ -63,6 +63,31 @@ function init() {
   };
   addGameObject(ground);
 
+  const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
+  enemies.forEach(enemy => {
+    const size = enemy.size;
+    const enemyGraphics = new createjs.Shape();
+    enemyGraphics.graphics
+      .beginFill('Violet')
+      .beginStroke('#000000')
+      .mt(size / 2, 0)
+      .lt(size, size)
+      .lt(0, size)
+      .lt(size / 2, 0);
+    enemyGraphics.x = Math.random() * 300;
+    enemyGraphics.y = Math.random() * 300;
+    const enemyObject = {
+      graphics: enemyGraphics,
+      onTick: (ev, self) => {
+        self.velocity.x += 5 * Math.sin(0.005 * ev.time);
+        self.velocity.y += 5 * Math.cos(0.005 * ev.time);
+      },
+      gravity: false,
+      velocity: { x: 10, y: 10 }
+    };
+    addGameObject(enemyObject);
+  });
+
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
     gameObjects.forEach(go => {
