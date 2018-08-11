@@ -27,6 +27,18 @@ function init() {
     gameObjects.push(go);
   }
 
+  const backgrounGraphics = new createjs.Shape();
+  backgrounGraphics.graphics
+    .beginFill('Green')
+    .drawCircle(Math.random() * 1000, Math.random() * 500, Math.random() * 300)
+    .beginFill('Red')
+    .drawCircle(Math.random() * 1000, Math.random() * 500, Math.random() * 300)
+    .beginFill('Blue')
+    .drawCircle(Math.random() * 1000, Math.random() * 500, Math.random() * 300);
+  backgrounGraphics.x = 0;
+  backgrounGraphics.y = 0;
+  stage.addChild(backgrounGraphics);
+
   const playerGraphics = new createjs.Shape();
   playerGraphics.graphics
     .beginFill('Green')
