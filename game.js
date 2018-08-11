@@ -46,7 +46,7 @@ function init() {
   }
 
 
-  addGameObject( createPlayer(new Vector(100, 100)) );
+  addGameObject(createPlayer(new Vector(100, 100)));
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
@@ -95,10 +95,9 @@ function init() {
     };
     addGameObject(enemyObject);
   });
-
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
-    const cameraOffset = new Vector(50 * Math.cos(ev.time / 500), 50 * Math.sin(ev.time / 500))
+    applyCameraAccelerationAndVelocity(ev.delta);
     gameObjects.forEach(go => {
       applyAcceleration(go, ev.delta);
       applyVelocity(go, ev.delta);
@@ -110,9 +109,15 @@ function init() {
 
   stage.add;
 }
+const gravityAccelerationY = 80; // pixels / s^2
+
+function applyCameraAccelerationAndVelocity(deltaT) {
+  cameraVelocity.y -= (gravityAccelerationY * deltaT) / 1000;
+  cameraVelocity = cameraVelocity.add(cameraAcceleration.opposite().scalarMult(deltaT / 1000));
+  cameraOffset = cameraOffset.add(cameraVelocity.scalarMult(deltaT / 1000));
+}
 
 function applyAcceleration(go, deltaT) {
-  const gravityAccelerationY = 80; // pixels / s^2
   if (go.gravity) {
     go.velocity.y += (gravityAccelerationY * deltaT) / 1000;
   }

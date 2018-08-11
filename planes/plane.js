@@ -1,16 +1,20 @@
+let cameraOffset = new Vector(0, 0)
+let cameraAcceleration = new Vector(0, 0)
+let cameraVelocity = new Vector(0, 0)
+
 function createPlayer(position) {
   const playerGraphics = new createjs.Shape();
-    playerGraphics.graphics
-      .beginFill('Green')
-      .beginStroke('#000000')
-      .mt(0, -70)
-      .lt(50, 30)
-      .lt(-50, 30)
-      .lt(0, -70)
-      .beginFill('Red')
-      .drawCircle(0, 0, 10);
-    playerGraphics.x = 0;
-    playerGraphics.y = 0;
+  playerGraphics.graphics
+    .beginFill('Green')
+    .beginStroke('#000000')
+    .mt(0, -70)
+    .lt(50, 30)
+    .lt(-50, 30)
+    .lt(0, -70)
+    .beginFill('Red')
+    .drawCircle(0, 0, 10);
+  playerGraphics.x = 0;
+  playerGraphics.y = 0;
   return {
     collision: {
       type: "CIRCLE",
@@ -28,32 +32,34 @@ function createPlayer(position) {
       const dragCoefficient = 0.005;
       const dragMagnitude = -(self.velocity.toPolar().r ** 2 * dragCoefficient)
       const drag = self.velocity.unit().scalarMult(dragMagnitude);
-      self.acceleration = Vector.fromPolar(
+      self.acceleration = cameraAcceleration = Vector.fromPolar(
         self.accelerationMagnitude,
         self.rotation,
       ).add(drag);
     },
     init: (self) => {
+      cameraOffset = new Vector($(window).width() / 2 - self.graphics.x, $(window).height() / 2, self.graphics.y);
+      console.log(new Vector($(window).width() / 2 - self.graphics.x, $(window).height() / 2, self.graphics.y));
       const defaultAcceleration = 10;
-      const boostAcceleration = 100;
+      const boostAcceleration = 1000;
       self.accelerationMagnitude = defaultAcceleration;
       const angularVelocity = Math.PI;
 
       document.addEventListener('keydown', (ev) => {
         switch (ev.key) {
-        case 'ArrowLeft':
-          self.angularVelocity = angularVelocity;
-          break;
-        case 'ArrowRight':
-          self.angularVelocity = -angularVelocity;
-          break;
-        case 'ArrowUp':
-          self.accelerationMagnitude = boostAcceleration;
-          break;
+          case 'ArrowLeft':
+            self.angularVelocity = angularVelocity;
+            break;
+          case 'ArrowRight':
+            self.angularVelocity = -angularVelocity;
+            break;
+          case 'ArrowUp':
+            self.accelerationMagnitude = boostAcceleration;
+            break;
         }
       });
       document.addEventListener('keyup', (ev) => {
-          switch (ev.key) {
+        switch (ev.key) {
           case 'ArrowLeft':
           case 'ArrowRight':
             self.angularVelocity = 0;
@@ -61,7 +67,7 @@ function createPlayer(position) {
           case 'ArrowUp':
             self.accelerationMagnitude = defaultAcceleration;
             break;
-          }
+        }
       });
     },
     gravity: true,
