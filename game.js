@@ -40,7 +40,15 @@ function init() {
           .drawCircle(0, 0, Math.random() * 100)
         ball.x = Math.random() * $(window).width();
         ball.y = Math.random() * $(window).height();
-        stage.addChild(ball);
+        const ballObject = {
+          graphics: ball,
+          position: new Vector(0, 0),
+          onTick: (ev, self) => ({}),
+          velocity: new Vector(0, 0),
+          acceleration: new Vector(0, 0),
+        };
+        addGameObject(ballObject);
+
       })
     }))
   }
