@@ -15,7 +15,6 @@ function init() {
    *   gravity - Boolean whether to apply gravity
    *   velocity - vector in pixels per second
    *   acceleration - vector in pixels/s^2
-   *   maxVelocity - {maxX, maxY, minX, minY} in pixels/s^2
    *   hitbox - ???
    */
   const gameObjects = [];
@@ -69,14 +68,19 @@ function init() {
     onTick: (ev, self) => {
       applyAngularVelocity(self, ev.delta);
       self.graphics.rotation = radToDeg(self.rotation);
+
+      // drag ~ velocity squared
+      const dragCoefficient = 0.005;
+      const dragMagnitude = -(self.velocity.toPolar().r ** 2 * dragCoefficient)
+      const drag = self.velocity.unit().scalarMult(dragMagnitude);
       self.acceleration = Vector.fromPolar(
         self.accelerationMagnitude,
         self.rotation,
-      );
+      ).add(drag);
     },
     init: (self) => {
       const defaultAcceleration = 15;
-      const boostAcceleration = 25;
+      const boostAcceleration = 30;
       self.accelerationMagnitude = defaultAcceleration;
 
       const angularVelocity = Math.PI;
@@ -108,7 +112,6 @@ function init() {
     gravity: true,
     velocity: new Vector(0, -10),
     acceleration: new Vector(0, 0),
-    maxVelocity: { maxX: 200, minX: -200, maxY: 200, minY: -200 },
     rotation: 0, // radians, 0 towards the right, grows counterclockwise
     angularVelocity: 0,
     accelerationMagnitude: undefined,
@@ -124,7 +127,6 @@ function init() {
     onTick: (ev, self) => ({}),
     velocity: new Vector(0, 0),
     acceleration: new Vector(0, 0),
-    maxVelocity: { maxX: 0, minX: 0, maxY: 0, minY: 0 },
   };
   addGameObject(ground);
 
@@ -158,7 +160,6 @@ function init() {
       gravity: false,
       velocity: new Vector(10, 10),
       acceleration: new Vector(0, 0),
-      maxVelocity: { maxX: 20, minX: -20, maxY: 20, minY: -20 },
     };
     addGameObject(enemyObject);
   });
@@ -185,19 +186,6 @@ function applyAcceleration(go, deltaT) {
 }
 
 function applyVelocity(go, deltaT) {
-  if (go.velocity.x > go.maxVelocity.maxX) {
-    go.velocity.x = go.maxVelocity.maxX;
-    go.acceleration.x = 0;
-  } else if (go.velocity.x < go.maxVelocity.minX) {
-    go.velocity.x = go.maxVelocity.minX;
-    go.acceleration.x = 0;
-  } else if (go.velocity.y > go.maxVelocity.maxY) {
-    go.velocity.y = go.maxVelocity.maxY;
-    go.acceleration.y = 0;
-  } else if (go.velocity.y < go.maxVelocity.minY) {
-    go.velocity.y = go.maxVelocity.minY;
-    go.acceleration.y = 0;
-  }
   go.graphics.x += (go.velocity.x * deltaT) / 1000;
   go.graphics.y += (go.velocity.y * deltaT) / 1000;
 }

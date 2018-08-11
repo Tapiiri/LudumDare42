@@ -17,4 +17,13 @@ class Vector {
     const y = r * Math.sin(phi);
     return new Vector(x, y);
   }
+
+  toPolar() {
+    return { r: Math.hypot(this.x, this.y), phi: Math.atan2(this.y, this.x) };
+  }
+
+  unit() {
+    const phi = this.toPolar().phi;
+    return Vector.fromPolar(1, phi);
+  }
 }
