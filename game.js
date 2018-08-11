@@ -5,7 +5,11 @@ function init() {
   player.x = 100;
   player.y = 100;
   stage.addChild(player);
-  stage.update();
+  createjs.Ticker.addEventListener('tick', onTick);
+  function onTick(ev) {
+    player.x += 5 * Math.sin(0.005 * ev.time);
+    stage.update();
+  }
 
   stage.add;
 }
