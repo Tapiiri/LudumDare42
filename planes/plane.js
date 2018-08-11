@@ -4,16 +4,7 @@ let cameraVelocity = new Vector(0, 10)
 
 class Plane {
   constructor(position) {
-    this.graphics = new createjs.Shape();
-    this.graphics.graphics
-      .beginFill('Green')
-      .beginStroke('#000000')
-      .mt(0, -70)
-      .lt(50, 30)
-      .lt(-50, 30)
-      .lt(0, -70)
-      .beginFill('Red')
-      .drawCircle(0, 0, 10);
+    this.graphics = playerGraphics;
     this.graphics.x = position.x;
     this.graphics.y = position.y;
 
@@ -24,15 +15,15 @@ class Plane {
     }
 
     cameraOffset = new Vector($(window).width() / 2 - position.x, $(window).height() / 2, position.y);
-    const defaultAcceleration = 10;
-    const boostAcceleration = 1000;
+    
+    self.defaultAcceleration = 10;
+    self.boostAcceleration = 1000;
     self.accelerationMagnitude = defaultAcceleration;
-    const angularVelocity = Math.PI;
+    self.angularVelocity = Math.PI;
 
     document.addEventListener('keydown', (ev) => {
       switch (ev.key) {
         case 'ArrowLeft':
-          this.angularVelocity = angularVelocity;
           break;
         case 'ArrowRight':
           this.angularVelocity = -angularVelocity;
@@ -60,6 +51,10 @@ class Plane {
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
     this.angularVelocity = 0
     this.accelerationMagnitude = 10
+  }
+
+  turn(d) {
+    this.angularVelocity = angularVelocity;
   }
 
   onTick(ev) {
