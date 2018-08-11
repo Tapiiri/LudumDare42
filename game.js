@@ -13,8 +13,13 @@ document.onkeyup = handleKeyUp;
 
 function init() {
   const stageCanvas = document.getElementById('demoCanvas');
-  stageCanvas.width = $(window).width();
-  stageCanvas.height = $(window).height();
+  const resize = () => {
+    stageCanvas.width = stageCanvas.clientWidth;
+    stageCanvas.height = stageCanvas.clientHeight;
+  };
+  window.addEventListener('resize', resize);
+  resize();
+
   let stage = new createjs.Stage('demoCanvas');
   /* gameObject contains:
    *   graphics - EaselJS DisplayObject
