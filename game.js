@@ -48,13 +48,24 @@ function init() {
     graphics: playerGraphics,
     onTick: (ev, self) => (self.graphics.x += 5 * Math.sin(0.005 * ev.time)),
     gravity: true,
-    velocity: { x: 0, y: -100 },
+    velocity: { x: 0, y: -100 }
   };
   addGameObject(player);
 
+  const groundGraphics = new createjs.Shape();
+  groundGraphics.graphics.beginFill('BLue').drawRect(0, 0, 10000, 100);
+  groundGraphics.x = 100;
+  groundGraphics.y = 600;
+  const ground = {
+    graphics: groundGraphics,
+    onTick: (ev, self) => ({}),
+    velocity: { x: 0, y: 0 }
+  };
+  addGameObject(ground);
+
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
-    gameObjects.forEach((go) => {
+    gameObjects.forEach(go => {
       applyGravity(go, ev.delta);
       applyVelocity(go, ev.delta);
       go.onTick(ev, go);
@@ -68,13 +79,13 @@ function init() {
 function applyGravity(go, deltaT) {
   const gravityAccelerationY = 98.1; // pixels / s^2
   if (go.gravity) {
-    go.velocity.y += gravityAccelerationY * deltaT / 1000;
+    go.velocity.y += (gravityAccelerationY * deltaT) / 1000;
   }
 }
 
 function applyVelocity(go, deltaT) {
-  go.graphics.x += go.velocity.x * deltaT / 1000;
-  go.graphics.y += go.velocity.y * deltaT / 1000;
+  go.graphics.x += (go.velocity.x * deltaT) / 1000;
+  go.graphics.y += (go.velocity.y * deltaT) / 1000;
 }
 
 function handleKeyDown(e) {
