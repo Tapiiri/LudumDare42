@@ -27,17 +27,24 @@ function init() {
     gameObjects.push(go);
   }
 
-  const backgrounGraphics = new createjs.Shape();
-  backgrounGraphics.graphics
-    .beginFill('Green')
-    .drawCircle(Math.random() * 1000, Math.random() * 500, Math.random() * 300)
-    .beginFill('Red')
-    .drawCircle(Math.random() * 1000, Math.random() * 500, Math.random() * 300)
-    .beginFill('Blue')
-    .drawCircle(Math.random() * 1000, Math.random() * 500, Math.random() * 300);
-  backgrounGraphics.x = 0;
-  backgrounGraphics.y = 0;
-  stage.addChild(backgrounGraphics);
+  const backgroundColors = ["	#4deeea", "#74ee15", "#ffe700", "#f000ff", "#001eff"]
+  const borderColors = ["	#4deeea", "#74ee15", "#ffe700", "#f000ff", "#001eff"]
+
+  for (let index = 0; index < 50; index++) {
+    backgroundColors.forEach((f => {
+      borderColors.forEach(b => {
+        const ball = new createjs.Shape();
+        ball.graphics
+          .beginFill(f)
+          .beginStroke(b)
+          .drawCircle(0, 0, Math.random() * 100)
+        ball.x = Math.random() * $(window).width();
+        ball.y = Math.random() * $(window).height();
+        stage.addChild(ball);
+      })
+    }))
+  }
+
 
   const playerGraphics = new createjs.Shape();
   playerGraphics.graphics
@@ -48,7 +55,7 @@ function init() {
     .lt(-50, 30)
     .lt(0, -70)
     .beginFill('Red')
-    .drawCircle(0,0,10);
+    .drawCircle(0, 0, 10);
   playerGraphics.x = 100;
   playerGraphics.y = 100;
   const player = {
@@ -133,7 +140,7 @@ function init() {
       .lt(0, size)
       .lt(size / 2, 0)
       .beginFill('Red')
-      .drawCircle(0,0,4);
+      .drawCircle(0, 0, 4);
     enemyGraphics.x = Math.random() * 300;
     enemyGraphics.y = Math.random() * 300;
     const enemyObject = {
@@ -201,22 +208,22 @@ function applyAngularVelocity(go, deltaT) {
 
 
 function circleToCircleCollision(circ0, circ1) {
-  return (circ0.collisionRadius + circ1.collisionRadius) < Math.hypot( circ0.x - circ1.x, circ0.y - circ1.y);
+  return (circ0.collisionRadius + circ1.collisionRadius) < Math.hypot(circ0.x - circ1.x, circ0.y - circ1.y);
 }
 
-function RectCircleColliding(circ,rect){
-  const distX = Math.abs(circ.x - rect.x-rect.w/2);
-  const distY = Math.abs(circ.y - rect.y-rect.h/2);
+function RectCircleColliding(circ, rect) {
+  const distX = Math.abs(circ.x - rect.x - rect.w / 2);
+  const distY = Math.abs(circ.y - rect.y - rect.h / 2);
 
-  if (distX > (rect.w/2 + circ.collisionRadius)) { return false; }
-  if (distY > (rect.h/2 + circ.collisionRadius)) { return false; }
+  if (distX > (rect.w / 2 + circ.collisionRadius)) { return false; }
+  if (distY > (rect.h / 2 + circ.collisionRadius)) { return false; }
 
-  if (distX <= (rect.w/2)) { return true; } 
-  if (distY <= (rect.h/2)) { return true; }
+  if (distX <= (rect.w / 2)) { return true; }
+  if (distY <= (rect.h / 2)) { return true; }
 
-  const dx=distX-rect.w/2;
-  const dy=distY-rect.h/2;
-  return (dx*dx+dy*dy<=(circ.collisionRadius*circ.collisionRadius));
+  const dx = distX - rect.w / 2;
+  const dy = distY - rect.h / 2;
+  return (dx * dx + dy * dy <= (circ.collisionRadius * circ.collisionRadius));
 }
 
 const radToDeg = rad => ((rad - 0.5 * Math.PI) * 180 / Math.PI) + 360
