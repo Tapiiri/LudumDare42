@@ -1,5 +1,9 @@
 function init() {
+  const stageCanvas = document.getElementById('demoCanvas');
+  stageCanvas.width = $(window).width();
+  stageCanvas.height = $(window).height();
   let stage = new createjs.Stage('demoCanvas');
+  stage.w;
   let player = new createjs.Shape();
   player.graphics.beginFill('Red').drawRect(0, 0, 100, 100);
   player.x = 100;
