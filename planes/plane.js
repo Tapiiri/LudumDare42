@@ -1,4 +1,4 @@
-function createPlayer(x,y) {
+function createPlayer(position) {
   const playerGraphics = new createjs.Shape();
     playerGraphics.graphics
       .beginFill('Green')
@@ -9,16 +9,17 @@ function createPlayer(x,y) {
       .lt(0, -70)
       .beginFill('Red')
       .drawCircle(0, 0, 10);
-    playerGraphics.x = x;
-    playerGraphics.y = y;
+    playerGraphics.x = 0;
+    playerGraphics.y = 0;
   return {
     collision: {
       type: "CIRCLE",
       collisionRadius: 10,
-      x: x,
-      y: y,
+      x: position.x,
+      y: position.y,
     },
     graphics: playerGraphics,
+    position,
     onTick: (ev, self) => {
       applyAngularVelocity(self, ev.delta);
       self.graphics.rotation = radToDeg(self.rotation);
@@ -33,8 +34,8 @@ function createPlayer(x,y) {
       ).add(drag);
     },
     init: (self) => {
-      const defaultAcceleration = 15;
-      const boostAcceleration = 25;
+      const defaultAcceleration = 10;
+      const boostAcceleration = 100;
       self.accelerationMagnitude = defaultAcceleration;
       const angularVelocity = Math.PI;
 
@@ -60,7 +61,7 @@ function createPlayer(x,y) {
           case 'ArrowUp':
             self.accelerationMagnitude = defaultAcceleration;
             break;
-          }  
+          }
       });
     },
     gravity: true,
@@ -69,5 +70,5 @@ function createPlayer(x,y) {
     rotation: 0, // radians, 0 towards the right, grows counterclockwise
     angularVelocity: 0,
     accelerationMagnitude: undefined,
-  };   
+  };
 };

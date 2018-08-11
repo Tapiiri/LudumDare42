@@ -10,6 +10,7 @@ function init() {
   let stage = new createjs.Stage('demoCanvas');
   /* gameObject contains:
    *   graphics - EaselJS DisplayObject
+   *   position - vector in world coords
    *   onTick - function (tick event, this gameObject)
    *   init - (optional) function (this gameObject)
    *   gravity - Boolean whether to apply gravity
@@ -45,14 +46,15 @@ function init() {
   }
 
 
-  addGameObject( createPlayer(100, 100) );
+  addGameObject( createPlayer(new Vector(100, 100)) );
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
-  groundGraphics.x = 100;
-  groundGraphics.y = 600;
+  groundGraphics.x = 0;
+  groundGraphics.y = 0;
   const ground = {
     graphics: groundGraphics,
+    position: new Vector(100, 600),
     onTick: (ev, self) => ({}),
     velocity: new Vector(0, 0),
     acceleration: new Vector(0, 0),
@@ -72,8 +74,8 @@ function init() {
       .lt(size / 2, 0)
       .beginFill('Red')
       .drawCircle(0, 0, 4);
-    enemyGraphics.x = Math.random() * 300;
-    enemyGraphics.y = Math.random() * 300;
+    enemyGraphics.x = 0;
+    enemyGraphics.y = 0;
     const enemyObject = {
       collision: {
         type: "CIRCLE",
@@ -82,6 +84,7 @@ function init() {
         y: 100,
       },
       graphics: enemyGraphics,
+      position: new Vector(Math.random() * 300, Math.random() * 300),
       onTick: (ev, self) => {
         self.velocity.x += 5 * Math.sin(0.005 * ev.time);
         self.velocity.y += 5 * Math.cos(0.005 * ev.time);
@@ -95,9 +98,11 @@ function init() {
 
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
+    const cameraOffset = new Vector(50 * Math.cos(ev.time / 500), 50 * Math.sin(ev.time / 500))
     gameObjects.forEach(go => {
       applyAcceleration(go, ev.delta);
       applyVelocity(go, ev.delta);
+      updateCameraCoords(go, cameraOffset);
       go.onTick(ev, go);
     });
     stage.update();
@@ -107,7 +112,7 @@ function init() {
 }
 
 function applyAcceleration(go, deltaT) {
-  const gravityAccelerationY = 8; // pixels / s^2
+  const gravityAccelerationY = 80; // pixels / s^2
   if (go.gravity) {
     go.velocity.y += (gravityAccelerationY * deltaT) / 1000;
   }
@@ -115,12 +120,17 @@ function applyAcceleration(go, deltaT) {
 }
 
 function applyVelocity(go, deltaT) {
-  go.graphics.x += (go.velocity.x * deltaT) / 1000;
-  go.graphics.y += (go.velocity.y * deltaT) / 1000;
+  go.position = go.position.add(go.velocity.scalarMult(deltaT / 1000));
 }
 
 function applyAngularVelocity(go, deltaT) {
   go.rotation += go.angularVelocity * deltaT / 1000;
+}
+
+function updateCameraCoords(go, cameraOffset) {
+  const cameraCoords = go.position.add(cameraOffset);
+  go.graphics.x = cameraCoords.x;
+  go.graphics.y = cameraCoords.y;
 }
 
 
