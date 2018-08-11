@@ -1,3 +1,6 @@
+let cameraOffset = new Vector(0, 0)
+let cameraAcceleration = new Vector(0, 0)
+let cameraVelocity = new Vector(0, 0)
 
 class Plane {
   constructor(position) {
@@ -20,6 +23,8 @@ class Plane {
       pos: position
     }
 
+    console.log(new Vector($(window).width() / 2 - this.graphics.x, $(window).height() / 2, this.graphics.y));
+    cameraOffset = new Vector($(window).width() / 2 - this.graphics.x, $(window).height() / 2, this.graphics.y);
     const defaultAcceleration = 10;
     const boostAcceleration = 100;
     this.accelerationMagnitude = defaultAcceleration;
@@ -55,7 +60,7 @@ class Plane {
     this.acceleration = new Vector(0, 0)
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
     this.angularVelocity = 0
-    this.accelerationMagnitude = 100
+    this.accelerationMagnitude = 10
   }
 
   onTick(ev) {

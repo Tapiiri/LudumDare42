@@ -8,6 +8,10 @@ class Vector {
     return new Vector(this.x + that.x, this.y + that.y);
   }
 
+  opposite() {
+    return new Vector(-this.x, -this.y)
+  }
+
   scalarMult(c) {
     return new Vector(c * this.x, c * this.y);
   }

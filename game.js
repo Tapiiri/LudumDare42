@@ -45,7 +45,6 @@ function init() {
     }))
   }
 
-
   addGameObject( new Plane(new Vector(100, 100)) );
 
   const groundGraphics = new createjs.Shape();
@@ -93,10 +92,9 @@ function init() {
     };
     addGameObject(enemyObject);
   });
-
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
-    const cameraOffset = new Vector(50 * Math.cos(ev.time / 500), 50 * Math.sin(ev.time / 500))
+    applyCameraAccelerationAndVelocity(ev.delta);
     gameObjects.forEach(go => {
       applyAcceleration(go, ev.delta);
       applyVelocity(go, ev.delta);
@@ -108,9 +106,15 @@ function init() {
 
   stage.add;
 }
+const gravityAccelerationY = 80; // pixels / s^2
+
+function applyCameraAccelerationAndVelocity(deltaT) {
+  cameraVelocity.y -= (gravityAccelerationY * deltaT) / 1000;
+  cameraVelocity = cameraVelocity.add(cameraAcceleration.opposite().scalarMult(deltaT / 1000));
+  cameraOffset = cameraOffset.add(cameraVelocity.scalarMult(deltaT / 1000));
+}
 
 function applyAcceleration(go, deltaT) {
-  const gravityAccelerationY = 80; // pixels / s^2
   if (go.gravity) {
     go.velocity.y += (gravityAccelerationY * deltaT) / 1000;
   }
@@ -129,6 +133,30 @@ function updateCameraCoords(go, cameraOffset) {
   const cameraCoords = go.collision.pos.add(cameraOffset);
   go.graphics.x = cameraCoords.x;
   go.graphics.y = cameraCoords.y;
+}
+function checkCollisions(gos) {
+  let i = -1;
+  gosSortedByX = temp = gos.map(go => { i += 1; return { i, go } }).sort(go1, go2 => (go1.go.graphics.x - go1.go.size.w / 2) - (go2.go.graphics.x - go2.go.size.w / 2));
+  collisions = temp.map(go1 => {
+    let breakLoop = false;
+    return {
+      go1, go2: gosSortedByX.drop(go1.i).map(go2 => {
+        if (breakLoop)
+          return {};
+        if (go1.collision.type == "CIRCLE") {
+          if (go2.collision.type == "CIRCLE") {
+            if (circleToCircleCollision(go1.go, go2.go)) {
+              return go2;
+            } else {
+              breakLoop = true;
+            }
+          }
+        }
+        return {};
+      }).filter(go => go.collides)
+    };
+  });
+  return collisions;
 }
 
 
