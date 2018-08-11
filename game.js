@@ -13,8 +13,8 @@ function init() {
    *   onTick - function (tick event, this gameObject)
    *   init - (optional) function (this gameObject)
    *   gravity - Boolean whether to apply gravity
-   *   velocity - {x, y} in pixels per second
-   *   acceleration - {x, y} in pixels/s^2
+   *   velocity - vector in pixels per second
+   *   acceleration - vector in pixels/s^2
    *   maxVelocity - {maxX, maxY, minX, minY} in pixels/s^2
    *   hitbox - ???
    */
@@ -96,8 +96,8 @@ function init() {
       });
     },
     gravity: true,
-    velocity: { x: 0, y: -10 },
-    acceleration: { x: 0, y: 0 },
+    velocity: new Vector(0, -10),
+    acceleration: new Vector(0, 0),
     maxVelocity: { maxX: 50, minX: -50, maxY: 200, minY: -200 },
     rotation: 0, // radians, 0 towards the right, grows counterclockwise
     angularVelocity: 0,
@@ -111,8 +111,8 @@ function init() {
   const ground = {
     graphics: groundGraphics,
     onTick: (ev, self) => ({}),
-    velocity: { x: 0, y: 0 },
-    acceleration: { x: 0, y: 0 },
+    velocity: new Vector(0, 0),
+    acceleration: new Vector(0, 0),
     maxVelocity: { maxX: 0, minX: 0, maxY: 0, minY: 0 },
   };
   addGameObject(ground);
@@ -145,8 +145,8 @@ function init() {
         self.velocity.y += 5 * Math.cos(0.005 * ev.time);
       },
       gravity: false,
-      velocity: { x: 10, y: 10 },
-      acceleration: { x: 0, y: 0 },
+      velocity: new Vector(10, 10),
+      acceleration: new Vector(0, 0),
       maxVelocity: { maxX: 20, minX: -20, maxY: 20, minY: -20 },
     };
     addGameObject(enemyObject);
@@ -170,8 +170,7 @@ function applyAcceleration(go, deltaT) {
   if (go.gravity) {
     go.velocity.y += (gravityAccelerationY * deltaT) / 1000;
   }
-  go.velocity.x += (go.acceleration.x * deltaT) / 1000;
-  go.velocity.y += (go.acceleration.y * deltaT) / 1000;
+  go.velocity = go.velocity.add(go.acceleration.scalarMult(deltaT / 1000));
 }
 
 function applyVelocity(go, deltaT) {
