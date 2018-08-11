@@ -92,8 +92,23 @@ function applyVelocity(go, deltaT) {
 }
 
 
-function circleToCircleCollision(a, b) {
-  return (a.collisionRadius + b.collisionRadius) < Math.hypot( a.x - b.x, a.y - b.y);
+function circleToCircleCollision(circ0, circ1) {
+  return (circ0.collisionRadius + circ1.collisionRadius) < Math.hypot( circ0.x - circ1.x, circ0.y - circ1.y);
+}
+
+function RectCircleColliding(circ,rect){
+  var distX = Math.abs(circ.x - rect.x-rect.w/2);
+  var distY = Math.abs(circ.y - rect.y-rect.h/2);
+
+  if (distX > (rect.w/2 + circ.collisionRadius)) { return false; }
+  if (distY > (rect.h/2 + circ.collisionRadius)) { return false; }
+
+  if (distX <= (rect.w/2)) { return true; } 
+  if (distY <= (rect.h/2)) { return true; }
+
+  const dx=distX-rect.w/2;
+  const dy=distY-rect.h/2;
+  return (dx*dx+dy*dy<=(circ.collisionRadius*circ.collisionRadius));
 }
 
 function handleKeyDown(e) {
