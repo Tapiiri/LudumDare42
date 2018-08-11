@@ -53,22 +53,20 @@ function init() {
     }))
   }
 
-
-  const player = createPlayer(new Vector(100, 100));
-  addGameObject(player);
+  addGameObject( new Plane(new Vector(100, 100)) );
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
   groundGraphics.x = 0;
   groundGraphics.y = 0;
-  const ground = {
+  const ground = {  
     graphics: groundGraphics,
     position: new Vector(100, 600),
     onTick: (ev, self) => ({}),
     velocity: new Vector(0, 0),
     acceleration: new Vector(0, 0),
   };
-  addGameObject(ground);
+  // addGameObject(ground);
 
   const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
@@ -89,11 +87,9 @@ function init() {
       collision: {
         type: "CIRCLE",
         collisionRadius: 4,
-        x: 100,
-        y: 100,
+        pos: new Vector(Math.random() * 300, Math.random() * 300),
       },
       graphics: enemyGraphics,
-      position: new Vector(Math.random() * 300, Math.random() * 300),
       onTick: (ev, self) => {
         self.velocity.x += 5 * Math.sin(0.005 * ev.time);
         self.velocity.y += 5 * Math.cos(0.005 * ev.time);
@@ -134,7 +130,7 @@ function applyAcceleration(go, deltaT) {
 }
 
 function applyVelocity(go, deltaT) {
-  go.position = go.position.add(go.velocity.scalarMult(deltaT / 1000));
+  go.collision.pos = go.collision.pos.add(go.velocity.scalarMult(deltaT / 1000));
 }
 
 function applyAngularVelocity(go, deltaT) {
@@ -142,7 +138,7 @@ function applyAngularVelocity(go, deltaT) {
 }
 
 function updateCameraCoords(go, cameraOffset) {
-  const cameraCoords = go.position.add(cameraOffset);
+  const cameraCoords = go.collision.pos.add(cameraOffset);
   go.graphics.x = cameraCoords.x;
   go.graphics.y = cameraCoords.y;
 }
