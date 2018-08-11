@@ -29,13 +29,19 @@ function init() {
   }
 
   const playerGraphics = new createjs.Shape();
-  playerGraphics.graphics.beginFill('Red').drawRect(0, 0, 100, 100);
+  playerGraphics.graphics
+    .beginFill('Red')
+    .beginStroke('#000000')
+    .mt(50, 0)
+    .lt(100, 100)
+    .lt(0, 100)
+    .lt(50, 0);
   playerGraphics.x = 100;
   playerGraphics.y = 100;
   const player = {
     graphics: playerGraphics,
-    onTick: (ev, self) => self.graphics.x += 5 * Math.sin(0.005 * ev.time),
-    gravity: true,
+    onTick: (ev, self) => (self.graphics.x += 5 * Math.sin(0.005 * ev.time)),
+    gravity: true
   };
   addGameObject(player);
 
