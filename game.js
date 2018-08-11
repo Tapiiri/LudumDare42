@@ -62,9 +62,16 @@ function init() {
     onTick: (ev, self) => {
       applyAngularVelocity(self, ev.delta);
       self.graphics.rotation = radToDeg(self.rotation);
+      self.acceleration = Vector.fromPolar(
+        self.accelerationMagnitude,
+        self.rotation,
+      );
     },
     init: (self) => {
-      const acceleration = 120;
+      const defaultAcceleration = 15;
+      const boostAcceleration = 25;
+      self.accelerationMagnitude = defaultAcceleration;
+
       const angularVelocity = Math.PI;
       document.addEventListener('keydown', (ev) => {
         switch (ev.key) {
@@ -75,10 +82,7 @@ function init() {
           self.angularVelocity = -angularVelocity;
           break;
         case 'ArrowUp':
-          self.acceleration.y -= acceleration;
-          break;
-        case 'ArrowDown':
-          self.acceleration.y += acceleration;
+          self.accelerationMagnitude = boostAcceleration;
           break;
         }
       });
@@ -89,8 +93,7 @@ function init() {
           self.angularVelocity = 0;
           break;
         case 'ArrowUp':
-        case 'ArrowDown':
-          self.acceleration.y = 0;
+          self.accelerationMagnitude = defaultAcceleration;
           break;
         }
       });
@@ -98,9 +101,10 @@ function init() {
     gravity: true,
     velocity: new Vector(0, -10),
     acceleration: new Vector(0, 0),
-    maxVelocity: { maxX: 50, minX: -50, maxY: 200, minY: -200 },
+    maxVelocity: { maxX: 200, minX: -200, maxY: 200, minY: -200 },
     rotation: 0, // radians, 0 towards the right, grows counterclockwise
     angularVelocity: 0,
+    accelerationMagnitude: undefined,
   };
   addGameObject(player);
 
@@ -166,7 +170,7 @@ function init() {
 }
 
 function applyAcceleration(go, deltaT) {
-  const gravityAccelerationY = 100; // pixels / s^2
+  const gravityAccelerationY = 8; // pixels / s^2
   if (go.gravity) {
     go.velocity.y += (gravityAccelerationY * deltaT) / 1000;
   }
@@ -215,4 +219,4 @@ function RectCircleColliding(circ,rect){
   return (dx*dx+dy*dy<=(circ.collisionRadius*circ.collisionRadius));
 }
 
-const radToDeg = rad => -((rad + 0.5 * Math.PI) * 180 / Math.PI) + 360
+const radToDeg = rad => ((rad - 0.5 * Math.PI) * 180 / Math.PI) + 360
