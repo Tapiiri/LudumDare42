@@ -1,4 +1,20 @@
+const KEYCODE_ENTER = 13; //useful keycode
+const KEYCODE_SPACE = 32; //useful keycode
+const KEYCODE_UP = 38; //useful keycode
+const KEYCODE_LEFT = 37; //useful keycode
+const KEYCODE_RIGHT = 39; //useful keycode
+const KEYCODE_DOWN = 40;
+const KEYCODE_W = 87; //useful keycode
+const KEYCODE_A = 65; //useful keycode
+const KEYCODE_D = 68; //useful keycode
+
+document.onkeydown = handleKeyDown;
+document.onkeyup = handleKeyUp;
+
 function init() {
+  const stageCanvas = document.getElementById('demoCanvas');
+  stageCanvas.width = $(window).width();
+  stageCanvas.height = $(window).height();
   let stage = new createjs.Stage('demoCanvas');
   /* gameObject contains:
    *   graphics - EaselJS DisplayObject
@@ -30,4 +46,36 @@ function init() {
   }
 
   stage.add;
+}
+
+function handleKeyDown(e) {
+  if (!e) {
+    var e = window.event;
+  }
+  switch (e.keyCode) {
+    case KEYCODE_LEFT:
+      return false;
+    case KEYCODE_RIGHT:
+      return false;
+    case KEYCODE_UP:
+      return false;
+    case KEYCODE_DOWN:
+      return false;
+  }
+}
+
+function handleKeyUp(e) {
+  if (!e) {
+    var e = window.event;
+  }
+  switch (e.keyCode) {
+    case KEYCODE_LEFT:
+      return false;
+    case KEYCODE_RIGHT:
+      return false;
+    case KEYCODE_UP:
+      return false;
+    case KEYCODE_DOWN:
+      return false;
+  }
 }
