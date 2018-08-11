@@ -36,15 +36,18 @@ function init() {
 
   const playerGraphics = new createjs.Shape();
   playerGraphics.graphics
-    .beginFill('Red')
+    .beginFill('Green')
     .beginStroke('#000000')
     .mt(50, 0)
     .lt(100, 100)
     .lt(0, 100)
-    .lt(50, 0);
+    .lt(50, 0)
+    .beginFill('Red')
+    .drawCircle(0,0,10);
   playerGraphics.x = 100;
   playerGraphics.y = 100;
   const player = {
+    collisionRadius: 10,
     graphics: playerGraphics,
     onTick: (ev, self) => (self.graphics.x += 5 * Math.sin(0.005 * ev.time)),
     gravity: true,
@@ -75,6 +78,11 @@ function applyGravity(go, deltaT) {
 function applyVelocity(go, deltaT) {
   go.graphics.x += go.velocity.x * deltaT / 1000;
   go.graphics.y += go.velocity.y * deltaT / 1000;
+}
+
+
+function circleToCircleCollision(a, b) {
+  return (a.collisionRadius + b.collisionRadius) < Math.hypot( a.x - b.x, a.y - b.y);
 }
 
 function handleKeyDown(e) {
