@@ -81,10 +81,18 @@ function init() {
       .mt(size / 2, 0)
       .lt(size, size)
       .lt(0, size)
-      .lt(size / 2, 0);
+      .lt(size / 2, 0)
+      .beginFill('Red')
+      .drawCircle(0,0,4);
     enemyGraphics.x = Math.random() * 300;
     enemyGraphics.y = Math.random() * 300;
     const enemyObject = {
+      collision: {
+        type: "CIRCLE",
+        collisionRadius: 4,
+        x: 100,
+        y: 100,
+      },
       graphics: enemyGraphics,
       onTick: (ev, self) => {
         self.velocity.x += 5 * Math.sin(0.005 * ev.time);
