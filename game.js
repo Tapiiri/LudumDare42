@@ -47,7 +47,12 @@ function init() {
   playerGraphics.x = 100;
   playerGraphics.y = 100;
   const player = {
-    collisionRadius: 10,
+    collision: {
+      type: "CIRCLE",
+      collisionRadius: 10,
+      x: 100,
+      y: 100,
+    },
     graphics: playerGraphics,
     onTick: (ev, self) => (self.graphics.x += 5 * Math.sin(0.005 * ev.time)),
     gravity: true,
@@ -56,7 +61,7 @@ function init() {
   addGameObject(player);
 
   const groundGraphics = new createjs.Shape();
-  groundGraphics.graphics.beginFill('BLue').drawRect(0, 0, 10000, 100);
+  groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
   groundGraphics.x = 100;
   groundGraphics.y = 600;
   const ground = {
