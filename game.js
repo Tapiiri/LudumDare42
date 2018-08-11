@@ -31,10 +31,10 @@ function init() {
   playerGraphics.graphics
     .beginFill('Green')
     .beginStroke('#000000')
-    .mt(50, 0)
-    .lt(100, 100)
-    .lt(0, 100)
-    .lt(50, 0)
+    .mt(0, -70)
+    .lt(50, 30)
+    .lt(-50, 30)
+    .lt(0, -70)
     .beginFill('Red')
     .drawCircle(0,0,10);
   playerGraphics.x = 100;
@@ -47,16 +47,20 @@ function init() {
       y: 100,
     },
     graphics: playerGraphics,
-    onTick: (ev, self) => ({}),
+    onTick: (ev, self) => {
+      applyAngularVelocity(self, ev.delta);
+      self.graphics.rotation = radToDeg(self.rotation);
+    },
     init: (self) => {
       const acceleration = 120;
+      const angularVelocity = Math.PI;
       document.addEventListener('keydown', (ev) => {
         switch (ev.key) {
         case 'ArrowLeft':
-          self.acceleration.x -= acceleration;
+          self.angularVelocity = angularVelocity;
           break;
         case 'ArrowRight':
-          self.acceleration.x += acceleration;
+          self.angularVelocity = -angularVelocity;
           break;
         case 'ArrowUp':
           self.acceleration.y -= acceleration;
@@ -70,7 +74,7 @@ function init() {
         switch (ev.key) {
         case 'ArrowLeft':
         case 'ArrowRight':
-          self.acceleration.x = 0;
+          self.angularVelocity = 0;
           break;
         case 'ArrowUp':
         case 'ArrowDown':
@@ -83,6 +87,8 @@ function init() {
     velocity: { x: 0, y: -10 },
     acceleration: { x: 0, y: 0 },
     maxVelocity: { maxX: 50, minX: -50, maxY: 200, minY: -200 },
+    rotation: 0, // radians, 0 towards the right, grows counterclockwise
+    angularVelocity: 0,
   };
   addGameObject(player);
 
@@ -174,6 +180,10 @@ function applyVelocity(go, deltaT) {
   go.graphics.y += (go.velocity.y * deltaT) / 1000;
 }
 
+function applyAngularVelocity(go, deltaT) {
+  go.rotation += go.angularVelocity * deltaT / 1000;
+}
+
 
 function circleToCircleCollision(circ0, circ1) {
   return (circ0.collisionRadius + circ1.collisionRadius) < Math.hypot( circ0.x - circ1.x, circ0.y - circ1.y);
@@ -193,3 +203,5 @@ function RectCircleColliding(circ,rect){
   const dy=distY-rect.h/2;
   return (dx*dx+dy*dy<=(circ.collisionRadius*circ.collisionRadius));
 }
+
+const radToDeg = rad => -((rad + 0.5 * Math.PI) * 180 / Math.PI) + 360
