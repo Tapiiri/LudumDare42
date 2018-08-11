@@ -42,7 +42,11 @@ function init() {
         ball.y = Math.random() * $(window).height();
         const ballObject = {
           graphics: ball,
-          position: new Vector(0, 0),
+          collision: {
+            type: "CIRCLE",
+            collisionRadius: 4,
+            pos: new Vector(Math.random() * 300, Math.random() * 300),
+          },
           onTick: (ev, self) => ({}),
           velocity: new Vector(0, 0),
           acceleration: new Vector(0, 0),
@@ -53,16 +57,20 @@ function init() {
     }))
   }
 
-  addGameObject( new Plane(new Vector(100, 100)) );
+  addGameObject(new Plane(new Vector(100, 100)));
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
   groundGraphics.x = 0;
   groundGraphics.y = 0;
-  const ground = {  
+  const ground = {
     graphics: groundGraphics,
-    position: new Vector(100, 600),
     onTick: (ev, self) => ({}),
+    collision: {
+      type: "CIRCLE",
+      collisionRadius: 4,
+      pos: new Vector(100, 600),
+    },
     velocity: new Vector(0, 0),
     acceleration: new Vector(0, 0),
   };

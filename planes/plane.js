@@ -6,55 +6,44 @@ class Plane {
   constructor(position) {
     this.graphics = new createjs.Shape();
     this.graphics.graphics
-    .beginFill('Green')
-    .beginStroke('#000000')
-    .mt(0, -70)
-    .lt(50, 30)
-    .lt(-50, 30)
-    .lt(0, -70)
-    .beginFill('Red')
-    .drawCircle(0, 0, 10);
+      .beginFill('Green')
+      .beginStroke('#000000')
+      .mt(0, -70)
+      .lt(50, 30)
+      .lt(-50, 30)
+      .lt(0, -70)
+      .beginFill('Red')
+      .drawCircle(0, 0, 10);
     this.graphics.x = position.x;
     this.graphics.y = position.y;
-    
+
     this.collision = {
       type: "CIRCLE",
       collisionRadius: 10,
       pos: position
     }
 
-      // drag ~ velocity squared
-      const dragCoefficient = 0.005;
-      const dragMagnitude = -(self.velocity.toPolar().r ** 2 * dragCoefficient)
-      const drag = self.velocity.unit().scalarMult(dragMagnitude);
-      self.acceleration = cameraAcceleration = Vector.fromPolar(
-        self.accelerationMagnitude,
-        self.rotation,
-      ).add(drag);
-    },
-    init: (self) => {
-      cameraOffset = new Vector($(window).width() / 2 - self.position.x, $(window).height() / 2, self.position.y);
-      console.log(new Vector($(window).width() / 2 - self.graphics.x, $(window).height() / 2, self.graphics.y));
-      const defaultAcceleration = 10;
-      const boostAcceleration = 1000;
-      self.accelerationMagnitude = defaultAcceleration;
-      const angularVelocity = Math.PI;
+    cameraOffset = new Vector($(window).width() / 2 - position.x, $(window).height() / 2, position.y);
+    const defaultAcceleration = 10;
+    const boostAcceleration = 1000;
+    self.accelerationMagnitude = defaultAcceleration;
+    const angularVelocity = Math.PI;
 
     document.addEventListener('keydown', (ev) => {
       switch (ev.key) {
-      case 'ArrowLeft':
-        this.angularVelocity = angularVelocity;
-        break;
-      case 'ArrowRight':
-        this.angularVelocity = -angularVelocity;
-        break;
-      case 'ArrowUp':
-        this.accelerationMagnitude = boostAcceleration;
-        break;
+        case 'ArrowLeft':
+          this.angularVelocity = angularVelocity;
+          break;
+        case 'ArrowRight':
+          this.angularVelocity = -angularVelocity;
+          break;
+        case 'ArrowUp':
+          this.accelerationMagnitude = boostAcceleration;
+          break;
       }
     });
     document.addEventListener('keyup', (ev) => {
-        switch (ev.key) {
+      switch (ev.key) {
         case 'ArrowLeft':
         case 'ArrowRight':
           this.angularVelocity = 0;
@@ -62,7 +51,7 @@ class Plane {
         case 'ArrowUp':
           this.accelerationMagnitude = defaultAcceleration;
           break;
-        }
+      }
     });
 
     this.gravity = true
@@ -82,7 +71,7 @@ class Plane {
     const dragCoefficient = 0.005;
     const dragMagnitude = -(this.velocity.toPolar().r ** 2 * dragCoefficient)
     const drag = this.velocity.unit().scalarMult(dragMagnitude);
-    this.acceleration = Vector.fromPolar(
+    this.acceleration = cameraAcceleration = Vector.fromPolar(
       this.accelerationMagnitude,
       this.rotation,
     ).add(drag);
