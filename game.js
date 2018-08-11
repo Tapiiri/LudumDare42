@@ -20,6 +20,7 @@ function init() {
    *   graphics - EaselJS DisplayObject
    *   onTick - function (tick event, this gameObject)
    *   gravity - Boolean whether to apply gravity
+   *   velocity - {x, y} in pixels per second
    *   hitbox - ???
    */
   const gameObjects = [];
@@ -41,17 +42,34 @@ function init() {
   const player = {
     graphics: playerGraphics,
     onTick: (ev, self) => (self.graphics.x += 5 * Math.sin(0.005 * ev.time)),
-    gravity: true
+    gravity: true,
+    velocity: { x: 0, y: -100 },
   };
   addGameObject(player);
 
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
-    gameObjects.forEach(go => go.onTick(ev, go));
+    gameObjects.forEach((go) => {
+      applyGravity(go, ev.delta);
+      applyVelocity(go, ev.delta);
+      go.onTick(ev, go);
+    });
     stage.update();
   }
 
   stage.add;
+}
+
+function applyGravity(go, deltaT) {
+  const gravityAccelerationY = 98.1; // pixels / s^2
+  if (go.gravity) {
+    go.velocity.y += gravityAccelerationY * deltaT / 1000;
+  }
+}
+
+function applyVelocity(go, deltaT) {
+  go.graphics.x += go.velocity.x * deltaT / 1000;
+  go.graphics.y += go.velocity.y * deltaT / 1000;
 }
 
 function handleKeyDown(e) {
