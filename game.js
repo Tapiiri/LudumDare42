@@ -46,7 +46,8 @@ function init() {
   }
 
 
-  addGameObject(createPlayer(new Vector(100, 100)));
+  const player = createPlayer(new Vector(100, 100));
+  addGameObject(player);
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);

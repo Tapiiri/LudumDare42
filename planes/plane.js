@@ -1,6 +1,6 @@
 let cameraOffset = new Vector(0, 0)
 let cameraAcceleration = new Vector(0, 0)
-let cameraVelocity = new Vector(0, 0)
+let cameraVelocity = new Vector(0, 10)
 
 function createPlayer(position) {
   const playerGraphics = new createjs.Shape();
@@ -38,7 +38,7 @@ function createPlayer(position) {
       ).add(drag);
     },
     init: (self) => {
-      cameraOffset = new Vector($(window).width() / 2 - self.graphics.x, $(window).height() / 2, self.graphics.y);
+      cameraOffset = new Vector($(window).width() / 2 - self.position.x, $(window).height() / 2, self.position.y);
       console.log(new Vector($(window).width() / 2 - self.graphics.x, $(window).height() / 2, self.graphics.y));
       const defaultAcceleration = 10;
       const boostAcceleration = 1000;
