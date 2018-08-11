@@ -132,6 +132,30 @@ function updateCameraCoords(go, cameraOffset) {
   go.graphics.x = cameraCoords.x;
   go.graphics.y = cameraCoords.y;
 }
+function checkCollisions(gos) {
+  let i = -1;
+  gosSortedByX = temp = gos.map(go => { i += 1; return { i, go } }).sort(go1, go2 => (go1.go.graphics.x - go1.go.size.w / 2) - (go2.go.graphics.x - go2.go.size.w / 2));
+  collisions = temp.map(go1 => {
+    let breakLoop = false;
+    return {
+      go1, go2: gosSortedByX.drop(go1.i).map(go2 => {
+        if (breakLoop)
+          return {};
+        if (go1.collision.type == "CIRCLE") {
+          if (go2.collision.type == "CIRCLE") {
+            if (circleToCircleCollision(go1.go, go2.go)) {
+              return go2;
+            } else {
+              breakLoop = true;
+            }
+          }
+        }
+        return {};
+      }).filter(go => go.collides)
+    };
+  });
+  return collisions;
+}
 
 
 function circleToCircleCollision(circ0, circ1) {
