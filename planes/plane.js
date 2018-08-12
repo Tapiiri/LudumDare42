@@ -154,7 +154,7 @@ class Plane {
   }
 
   onCollisionWith(that) {
-    console.log(this, 'collided with', that);
+    //console.log(this, 'collided with', that);
   }
 }
 
