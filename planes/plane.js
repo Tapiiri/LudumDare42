@@ -48,8 +48,7 @@ class Plane {
   calculateControls() {
     const desiredVelocity = playerPosition.substract(this.collision.pos)
     const steering = desiredVelocity.substract(this.velocity)
-    const angleDiff = this.rotation - desiredVelocity.toPolar().phi
-    console.log(angleDiff);
+    const angleDiff = this.rotation - desiredVelocity.toPolar().phi;
     this.controlState = {};
     if (angleDiff > 0.3) {
       this.controlState.left = true;
