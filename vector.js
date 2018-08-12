@@ -8,6 +8,10 @@ class Vector {
     return new Vector(this.x + that.x, this.y + that.y);
   }
 
+  substract(that) {
+    return new Vector(this.x - that.x, this.y - that.y);
+  }
+
   opposite() {
     return new Vector(-this.x, -this.y)
   }
