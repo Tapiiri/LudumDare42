@@ -50,35 +50,6 @@ function init() {
   };
   addGameObject(ground);
 
-  const wallGraphics = new createjs.Shape();
-  wallGraphics.graphics.beginFill('Black').drawRect(-25, 0, 25, -5000);
-  wallGraphics.x = 0;
-  wallGraphics.y = 0;
-  const wallPrototype = {
-    onTick: (ev, self) => ({}),
-    onCollisionWith: (that, self) => {
-      const elasticity = 1;
-      that.velocity = that.velocity.scalarMult(elasticity);
-      that.velocity.x = -that.velocity.x;
-      that.acceleration.x = -that.acceleration.x;
-      that.rotation = that.velocity.toPolar().phi;
-    },
-    collision: {
-      type: 'LINE',
-      length: 5000,
-      rotation: -0.5 * Math.PI,
-    },
-    velocity: new Vector(0, 0),
-    acceleration: new Vector(0, 0),
-  }
-  const wall1 = $.extend(true, { graphics: wallGraphics.clone(true) }, wallPrototype);
-  const wall2 = Object.assign(true, { graphics: wallGraphics.clone(true) }, wallPrototype);
-  Object.assign(wall1.collision, { pos: new Vector(0, 2000) });
-  Object.assign(wall2.collision, { pos: new Vector(2000, 2000) });
-  console.log(wall1.collision);
-  addGameObject(wall1);
-  addGameObject(wall2);
-
   const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
     addGameObject(new Plane(new Vector(Math.random() * 300, -Math.random() * 300), false, addGameObject, removeGameObject));
@@ -108,6 +79,9 @@ function init() {
 }
 const gravityAccelerationY = 160; // pixels / s^2
 const reboundGravityY = -gravityAccelerationY;
+const outOfBoundsGravityX = 1010;
+const leftBoundsX = 0;
+const rightBoundsX = 4000;
 
 function applyCameraAccelerationAndVelocity(deltaT) {
   cameraVelocity.y -= (gravityAccelerationY * deltaT) / 1000;
@@ -120,6 +94,13 @@ function applyAcceleration(go, deltaT) {
     go.velocity.y += (
       (go.collision.pos.y <= 0 ? gravityAccelerationY : reboundGravityY)
         * deltaT) / 1000;
+    go.velocity.x += (
+      (
+        go.collision.pos.x < leftBoundsX ? outOfBoundsGravityX :
+        go.collision.pos.x > rightBoundsX ? -outOfBoundsGravityX :
+        0
+      ) * deltaT / 1000
+    );
   }
   go.velocity = go.velocity.add(go.acceleration.scalarMult(deltaT / 1000));
 }
