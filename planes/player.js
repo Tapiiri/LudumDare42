@@ -22,24 +22,26 @@ function addControls(player){
   document.addEventListener('keydown', (ev) => {
     switch (ev.key) {
       case 'ArrowLeft':
-        player.turn( 1);
+        player.controlState.left = true;
         break
       case 'ArrowRight':
-        player.turn(-1);
+        player.controlState.right = true;
         break;
       case 'ArrowUp':
-        player.accelerate(player.boostAcceleration)
+        player.controlState.up = true;
         break;
     }
   });
   document.addEventListener('keyup', (ev) => {
     switch (ev.key) {
       case 'ArrowLeft':
+        player.controlState.left = false;
+        break
       case 'ArrowRight':
-        player.turn( 0 );
+        player.controlState.right = false;
         break;
       case 'ArrowUp':
-        player.accelerate(player.defaultAcceleration)
+        player.controlState.up = false;
         break;
     }
   });

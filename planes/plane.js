@@ -15,6 +15,13 @@ class Plane {
     this.graphics.y = position.y;
     this.collision.pos = position;
 
+    this.controlState = {
+      left: false,
+      right: false,
+      up: false,
+      shoot: false,
+    }
+
     cameraOffset = new Vector($(window).width() / 2 - position.x, $(window).height() / 2, position.y);
 
     this.gravity = true
@@ -40,7 +47,29 @@ class Plane {
     this.accelerationMagnitude = accelerationMagnitude
   }
 
+  contorls(){
+    if (this.controlState.left == this.controlState.right){
+      this.turn(0);
+    }
+    else if (this.controlState.left){
+      this.turn(-1);
+    }
+    else if (this.controlState.right){
+      this.turn(1)
+    }
+
+    if (this.controlState.up){
+      this.accelerate( this.boostAcceleration )
+    }
+    else {
+      this.accelerate( this.defaultAcceleration )
+    }
+  }
+
   onTick(ev) {
+    
+    this.contorls()
+
     applyAngularVelocity(this, ev.delta);
     this.graphics.rotation = radToDeg(this.rotation);
 
