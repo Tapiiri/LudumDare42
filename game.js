@@ -57,7 +57,7 @@ function init() {
   const wallPrototype = {
     onTick: (ev, self) => ({}),
     onCollisionWith: (that, self) => {
-      const elasticity = 0.5;
+      const elasticity = 1;
       that.velocity = that.velocity.scalarMult(elasticity);
       that.velocity.x = -that.velocity.x;
       that.acceleration.x = -that.acceleration.x;
