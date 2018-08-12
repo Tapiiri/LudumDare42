@@ -3,6 +3,7 @@ class Line {
     this.onTick = () => { };
     const position = node1.collision.pos;
     const rotation = node2.collision.pos.substract(node1.collision.pos).toPolar().phi;
+    const length = node2.collision.pos.substract(node1.collision.pos).toPolar().r;
 
     this.graphics = setLineGraphics("Green", node1, node2);
     this.graphics.x = position.x;

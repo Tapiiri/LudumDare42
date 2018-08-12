@@ -130,11 +130,11 @@ function updateCameraCoords(go, cameraOffset) {
 function checkCollisions(gos) {
   let i = -1;
   const circleGosSortedByX = gos
-        .filter(go => go.collision.type === 'CIRCLE')
-        .sort((go1, go2) =>
-            (go1.graphics.x - go1.collision.radius) -
-            (go2.graphics.x - go2.collision.radius))
-        .map(go => { i += 1; return { i, go } });
+    .filter(go => go.collision.type === 'CIRCLE')
+    .sort((go1, go2) =>
+      (go1.graphics.x - go1.collision.radius) -
+      (go2.graphics.x - go2.collision.radius))
+    .map(go => { i += 1; return { i, go } });
 
   const lineGos = gos.filter(go => go.collision.type === 'LINE');
 
@@ -155,14 +155,14 @@ function checkCollisions(gos) {
   }).map(({ go1, go2s }) => { return { go1: go1.go, go2s } });
 
   const circleLineCollisions = circleGosSortedByX.map(go => go.go)
-        .map((go1) => {
-          return {
-            go1,
-            go2s: lineGos.filter(
-              go2 => circleToLineCollision(go1.collision, go2.collision)
-            ),
-          }
-        });
+    .map((go1) => {
+      return {
+        go1,
+        go2s: lineGos.filter(
+          go2 => circleToLineCollision(go1.collision, go2.collision)
+        ),
+      }
+    });
 
   const collisions = []
   console.assert(
@@ -202,7 +202,7 @@ function circleToLineCollision(circ, line) {
   const a = line.length ** 2;
   const b = 2 * (lineStart.x * lineVector.x + lineStart.y * lineVector.y);
   const c = (lineStart.toPolar().r ** 2) - (circ.radius ** 2);
-  const discriminant = b ** 2 - 4*a*c;
+  const discriminant = b ** 2 - 4 * a * c;
   if (discriminant <= 0) {
     return false;
   }
@@ -217,7 +217,7 @@ function circleToLineCollision(circ, line) {
 }
 
 const normaliseAngle = rad =>
-      rad < -Math.PI ? normaliseAngle(rad + 2 * Math.PI) :
-      rad > Math.PI ? normaliseAngle(rad - 2 * Math.PI) :
+  rad < -Math.PI ? normaliseAngle(rad + 2 * Math.PI) :
+    rad > Math.PI ? normaliseAngle(rad - 2 * Math.PI) :
       rad;
 const radToDeg = rad => (normaliseAngle(rad - 0.5 * Math.PI) * 180 / Math.PI)
