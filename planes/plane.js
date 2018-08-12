@@ -3,16 +3,17 @@ let cameraAcceleration = new Vector(0, 0)
 let cameraVelocity = new Vector(0, 10)
 
 class Plane {
-  constructor(position) {
-    this.graphics = playerGraphics;
+  constructor(position, isPlayer) {
+    if (!isPlayer) {
+      setShip( this );
+    }
+    else {
+      setPlayerShip( this );
+    }
+
     this.graphics.x = position.x;
     this.graphics.y = position.y;
-
-    this.collision = {
-      type: "CIRCLE",
-      collisionRadius: 10,
-      pos: position
-    }
+    this.collision.pos = position;
 
     cameraOffset = new Vector($(window).width() / 2 - position.x, $(window).height() / 2, position.y);
 
@@ -33,7 +34,6 @@ class Plane {
 
   turn( d ) {
     this.angularVelocity = d * this.turnspeed;
-    console.log(this.angularVelocity)
   }
 
   accelerate(accelerationMagnitude) {
@@ -52,5 +52,25 @@ class Plane {
       this.accelerationMagnitude,
       this.rotation,
     ).add(drag);
+  }
+}
+
+
+function setShip(ship){
+  const shipGraphics = new createjs.Shape();
+  shipGraphics.graphics
+  .beginFill('Green')
+  .beginStroke('#000000')
+  .mt(0, -70)
+  .lt(50, 30)
+  .lt(-50, 30)
+  .lt(0, -70)
+  .beginFill('Red')
+  .drawCircle(0, 0, 10);
+
+  ship.graphics = shipGraphics;
+  ship.collision = {
+    type: "CIRCLE",
+    collisionRadius: 10,
   }
 }

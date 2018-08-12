@@ -1,5 +1,6 @@
-const playerGraphics = new createjs.Shape();
-playerGraphics.graphics
+function setPlayerShip(ship){
+  const shipGraphics = new createjs.Shape();
+  shipGraphics.graphics
   .beginFill('Green')
   .beginStroke('#000000')
   .mt(0, -70)
@@ -8,6 +9,14 @@ playerGraphics.graphics
   .lt(0, -70)
   .beginFill('Red')
   .drawCircle(0, 0, 10);
+
+  ship.graphics = shipGraphics;
+  ship.collision = {
+    type: "CIRCLE",
+    collisionRadius: 10,
+    pos: position
+  }
+}
 
 function addControls(player){
   document.addEventListener('keydown', (ev) => {
