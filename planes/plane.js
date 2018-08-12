@@ -15,50 +15,32 @@ class Plane {
     }
 
     cameraOffset = new Vector($(window).width() / 2 - position.x, $(window).height() / 2, position.y);
-    
-    self.defaultAcceleration = 10;
-    self.boostAcceleration = 1000;
-    self.accelerationMagnitude = defaultAcceleration;
-    self.angularVelocity = Math.PI;
-
-    document.addEventListener('keydown', (ev) => {
-      switch (ev.key) {
-        case 'ArrowLeft':
-          break;
-        case 'ArrowRight':
-          this.angularVelocity = -angularVelocity;
-          break;
-        case 'ArrowUp':
-          this.accelerationMagnitude = boostAcceleration;
-          break;
-      }
-    });
-    document.addEventListener('keyup', (ev) => {
-      switch (ev.key) {
-        case 'ArrowLeft':
-        case 'ArrowRight':
-          this.angularVelocity = 0;
-          break;
-        case 'ArrowUp':
-          this.accelerationMagnitude = defaultAcceleration;
-          break;
-      }
-    });
 
     this.gravity = true
     this.velocity = new Vector(0, -10)
+    this.turnspeed = 3;
+
+    this.defaultAcceleration = 10;
+    this.boostAcceleration = 1000;
+    this.accelerationMagnitude = this.defaultAcceleration;
+
     this.acceleration = new Vector(0, 0)
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
-    this.angularVelocity = 0
-    this.accelerationMagnitude = 10
+    this.angularVelocity = 0;
+
+    addControls(this);
   }
 
-  turn(d) {
-    this.angularVelocity = angularVelocity;
+  turn( d ) {
+    this.angularVelocity = d * this.turnspeed;
+    console.log(this.angularVelocity)
+  }
+
+  accelerate(accelerationMagnitude) {
+    this.accelerationMagnitude = accelerationMagnitude
   }
 
   onTick(ev) {
-    console.log("tikking", this.collision.pos, this.velocity, this.acceleration)
     applyAngularVelocity(this, ev.delta);
     this.graphics.rotation = radToDeg(this.rotation);
 
