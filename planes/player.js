@@ -1,14 +1,14 @@
-function setPlayerShip(ship){
+function setPlayerShip(ship) {
   const shipGraphics = new createjs.Shape();
   shipGraphics.graphics
-  .beginFill('Green')
-  .beginStroke('#000000')
-  .mt(0, -70)
-  .lt(50, 30)
-  .lt(-50, 30)
-  .lt(0, -70)
-  .beginFill('Red')
-  .drawCircle(0, 0, 10);
+    .beginFill('Green')
+    .beginStroke('#000000')
+    .mt(0, -70)
+    .lt(50, 30)
+    .lt(-50, 30)
+    .lt(0, -70)
+    .beginFill('Red')
+    .drawCircle(0, 0, 10);
 
   ship.graphics = shipGraphics;
   ship.collision = {
@@ -19,7 +19,7 @@ function setPlayerShip(ship){
   addControls(ship);
 }
 
-function addControls(player){
+function addControls(player) {
   document.addEventListener('keydown', (ev) => {
     switch (ev.key) {
       case 'ArrowLeft':
@@ -30,6 +30,9 @@ function addControls(player){
         break;
       case 'ArrowUp':
         player.controlState.up = true;
+        break;
+      case ' ':
+        player.controlState.beginNodeLink = true;
         break;
     }
   });
@@ -43,6 +46,9 @@ function addControls(player){
         break;
       case 'ArrowUp':
         player.controlState.up = false;
+        break;
+      case ' ':
+        player.controlState.endNodeLink = true;
         break;
     }
   });

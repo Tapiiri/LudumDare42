@@ -6,13 +6,14 @@ let playerVelocity = new Vector(0, 10);
 let playerAcceleration = new Vector(0, 0);
 
 class Plane {
-  constructor(position, isPlayer) {
+  constructor(position, isPlayer, addGameObject) {
 
     this.controlState = {
       left: false,
       right: false,
       up: false,
-      shoot: false,
+      beginNodeLink: false,
+      endNodeLink: false
     }
     this.onTick = this.Tick;
 
@@ -43,11 +44,14 @@ class Plane {
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
     this.angularVelocity = 0;
 
+    this.addGameObject = addGameObject;
+
+    this.nodeLinkWaiting = false;
+
   }
 
   calculateControls() {
     const desiredVelocity = playerPosition.substract(this.collision.pos)
-    const steering = desiredVelocity.substract(this.velocity)
     const angleDiff = this.rotation - desiredVelocity.toPolar().phi;
     this.controlState = {};
     if (angleDiff > 0.3) {
@@ -85,6 +89,31 @@ class Plane {
     else {
       this.accelerate(this.defaultAcceleration)
     }
+
+    if (this.controlState.beginNodeLink && !this.nodeLinkWaiting && !this.controlState.endNodeLink) {
+      this.dropNode();
+    }
+
+    if (this.controlState.endNodeLink && this.nodeLinkWaiting) {
+      this.dropNode();
+    }
+  }
+
+  dropNode() {
+    if (this.nodeLinkWaiting) {
+      this.addGameObject(new Node(this.collision.pos, false));
+      this.controlState.endNodeLink = false;
+      this.controlState.beginNodeLink = false;
+      this.nodeLinkWaiting = false;
+    } else {
+      this.addGameObject(new Node(this.collision.pos, false));
+      this.controlState.beginNodeLink = false;
+      this.controlState.endNodeLink = false;
+      this.nodeLinkWaiting = true;
+    }
+  }
+
+  dropEndNode() {
   }
 
   focusTick(ev) {

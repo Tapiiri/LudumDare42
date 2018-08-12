@@ -9,23 +9,23 @@ function init() {
 
   let stage = new createjs.Stage('demoCanvas');
   /* gameObject contains:
-   *   graphics - EaselJS DisplayObject
-   *   onTick - function (tick event, this gameObject)
-   *   init - (optional) function (this gameObject)
-   *   onCollisionWith - function (that gameObject, this gameObject)
-   *   gravity - Boolean whether to apply gravity
-   *   velocity - vector in pixels per second
-   *   acceleration - vector in pixels/s^2
-   *   collision - object consisting of pos (position), radius, and type ('CIRCLE' or 'NONE')
-   */
+  *   graphics - EaselJS DisplayObject
+  *   onTick - function (tick event, this gameObject)
+  *   init - (optional) function (this gameObject)
+  *   onCollisionWith - function (that gameObject, this gameObject)
+  *   gravity - Boolean whether to apply gravity
+  *   velocity - vector in pixels per second
+  *   acceleration - vector in pixels/s^2
+  *   collision - object consisting of pos (position), radius, and type ('CIRCLE' or 'NONE')
+  */
   const gameObjects = [];
-  function addGameObject(go) {
+  const addGameObject = function (go) {
     if (typeof go.init === 'function') {
       go.init(go);
     }
     stage.addChild(go.graphics);
     gameObjects.push(go);
-  }
+  };
 
   const backgroundColors = ["	#4deeea", "#74ee15", "#ffe700", "#f000ff", "#001eff"]
   const borderColors = ["	#4deeea", "#74ee15", "#ffe700", "#f000ff", "#001eff"]
@@ -56,7 +56,7 @@ function init() {
     }))
   }
 
-  addGameObject(new Plane(new Vector(-10, -10), true));
+  addGameObject(new Plane(new Vector(-10, -10), true, addGameObject));
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
@@ -78,7 +78,7 @@ function init() {
 
   const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
-    addGameObject(new Plane(new Vector(Math.random() * 300, Math.random() * 300), false));
+    addGameObject(new Plane(new Vector(Math.random() * 300, Math.random() * 300), false, addGameObject));
   });
 
   createjs.Ticker.addEventListener('tick', onTick);
@@ -126,11 +126,11 @@ function updateCameraCoords(go, cameraOffset) {
 function checkCollisions(gos) {
   let i = -1;
   const gosSortedByX = gos
-        .filter(go => go.collision.type !== 'NONE')
-        .sort((go1, go2) =>
-            (go1.graphics.x - go1.collision.radius) -
-            (go2.graphics.x - go2.collision.radius))
-        .map(go => { i += 1; return { i, go } })
+    .filter(go => go.collision.type !== 'NONE')
+    .sort((go1, go2) =>
+      (go1.graphics.x - go1.collision.radius) -
+      (go2.graphics.x - go2.collision.radius))
+    .map(go => { i += 1; return { i, go } })
   const collisions = gosSortedByX.map(go1 => {
     let breakLoop = false;
     return {
