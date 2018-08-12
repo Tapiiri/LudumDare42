@@ -27,6 +27,8 @@ class Plane {
       this.onTick = this.focusTick;
     }
 
+    this.graphics.cache(-50, -50, 50 * 2, 50 * 2);
+
     this.graphics.x = position.x;
     this.graphics.y = position.y;
     this.collision.pos = position;
@@ -133,10 +135,10 @@ function setShip(ship) {
   shipGraphics.graphics
     .beginFill('Red')
     .beginStroke('#000000')
-    .mt(0, -70)
-    .lt(50, 30)
-    .lt(-50, 30)
-    .lt(0, -70)
+    .mt(0, -50)
+    .lt(40, 30)
+    .lt(-40, 30)
+    .lt(0, -50)
     .beginFill('Red')
     .drawCircle(0, 0, 10);
 

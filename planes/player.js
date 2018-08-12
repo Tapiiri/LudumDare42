@@ -3,10 +3,10 @@ function setPlayerShip(ship){
   shipGraphics.graphics
   .beginFill('Green')
   .beginStroke('#000000')
-  .mt(0, -70)
-  .lt(50, 30)
-  .lt(-50, 30)
-  .lt(0, -70)
+  .mt(0, -50)
+  .lt(40, 30)
+  .lt(-40, 30)
+  .lt(0, -50)
   .beginFill('Red')
   .drawCircle(0, 0, 10);
 
