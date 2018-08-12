@@ -1,14 +1,14 @@
 function setPlayerShip(ship) {
   const shipGraphics = new createjs.Shape();
   shipGraphics.graphics
-  .beginFill('Green')
-  .beginStroke('#000000')
-  .mt(0, -50)
-  .lt(40, 30)
-  .lt(-40, 30)
-  .lt(0, -50)
-  .beginFill('Red')
-  .drawCircle(0, 0, 10);
+    .beginFill('Green')
+    .beginStroke('#000000')
+    .mt(0, 50)
+    .lt(-40, -30)
+    .lt(40, -30)
+    .lt(0, 50)
+    .beginFill('Red')
+    .drawCircle(0, 0, 10);
 
   ship.graphics = shipGraphics;
   ship.collision = {

@@ -6,7 +6,7 @@ let playerVelocity = new Vector(0, 10);
 let playerAcceleration = new Vector(0, 0);
 
 class Plane {
-  constructor(position, isPlayer, addGameObject) {
+  constructor(position, isPlayer, addGameObject, removeGameObject) {
 
     this.controlState = {
       left: false,
@@ -47,9 +47,11 @@ class Plane {
     this.angularVelocity = 0;
 
     this.addGameObject = addGameObject;
+    this.removeGameObject = removeGameObject;
 
     this.nodeLinkWaiting = false;
     this.startNode = null;
+    this.nodeLinePairs = [];
 
   }
 
@@ -116,11 +118,24 @@ class Plane {
     } else {
       const endNode = new Node(this.collision.pos, false);
       this.addGameObject(endNode);
-      this.addGameObject(new Line(this.startNode, endNode, this));
+      const line = new Line(this.startNode, endNode, this);
+      this.addGameObject(line);
+      const newNodeLinePair = [this.startNode, line, endNode]
+      this.nodeLinePairs = this.nodeLinePairs.concat([newNodeLinePair]);
+      if (this.nodeLinePairs.length > 5) {
+        this.removeNodeLinePair(0);
+      }
       this.controlState.beginNodeLink = false;
       this.controlState.endNodeLink = false;
       this.nodeLinkWaiting = false;
     }
+  }
+
+  removeNodeLinePair(index) {
+    this.nodeLinePairs[index].forEach(go => {
+      this.removeGameObject(go);
+    })
+    this.nodeLinePairs.splice(index, 1);
   }
 
   focusTick(ev) {
@@ -169,10 +184,10 @@ function setShip(ship) {
   shipGraphics.graphics
     .beginFill('Red')
     .beginStroke('#000000')
-    .mt(0, -50)
-    .lt(40, 30)
-    .lt(-40, 30)
-    .lt(0, -50)
+    .mt(0, 50)
+    .lt(-40, -30)
+    .lt(40, -30)
+    .lt(0, 50)
     .beginFill('Red')
     .drawCircle(0, 0, 10);
 

@@ -28,8 +28,16 @@ function init() {
     stage.addChild(go.graphics);
     gameObjects.push(go);
   };
+  const removeGameObject = function (go) {
+    if (typeof go.onDestroy === 'function') {
+      go.onDestory(go);
+    }
+    stage.removeChild(go.graphics);
+    const gosId = gameObjects.findIndex(listGo => listGo.graphics.id === go.graphics.id);
+    gameObjects.splice(gosId, 1);
+  };
 
-  addGameObject(new Plane(new Vector(-10, -10), true, addGameObject));
+  addGameObject(new Plane(new Vector(-10, -10), true, addGameObject, removeGameObject));
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
@@ -52,7 +60,7 @@ function init() {
 
   const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
-    addGameObject(new Plane(new Vector(Math.random() * 300, Math.random() * 300), false, addGameObject));
+    addGameObject(new Plane(new Vector(Math.random() * 300, Math.random() * 300), false, addGameObject, removeGameObject));
   });
 
   createjs.Ticker.addEventListener('tick', onTick);
