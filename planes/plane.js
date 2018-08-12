@@ -170,9 +170,9 @@ class Plane {
     const airDragCoefficient = 0.002
     const waterDragCoefficient = 0.04;
     const dragCoefficient =
-          y <= -interfaceY ?
-          airDragCoefficient :
-          y <= interfaceY ?
+      y <= -interfaceY ?
+        airDragCoefficient :
+        y <= interfaceY ?
           airDragCoefficient + ((y + interfaceY) / (2 * interfaceY)) * waterDragCoefficient :
           airDragCoefficient + waterDragCoefficient;
 
@@ -182,7 +182,7 @@ class Plane {
     // Decrease power with increasing altitude
     const powerDecay = 0.002;
     const totalPower = this.power *
-          (1 - Math.tanh(powerDecay * Math.abs(this.collision.pos.y)));
+      (1 - Math.tanh(powerDecay * Math.abs(this.collision.pos.y)));
     this.acceleration = Vector.fromPolar(
       totalPower,
       this.rotation,
