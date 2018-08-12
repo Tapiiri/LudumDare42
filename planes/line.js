@@ -14,7 +14,7 @@ class Line {
       length: length,
       rotation: rotation
     }
-    this.onCollisionWith = () => { };
+    this.onCollisionWith = (that, self) => console.log('Line collision!');
 
     this.acceleration = new Vector(0, 0)
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
