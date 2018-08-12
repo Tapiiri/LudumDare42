@@ -3,9 +3,8 @@ class Node {
     this.onTick = () => { };
     this.graphics = setNodeGraphics("Green");
     this.collision = {
-      type: "CIRCLE",
-      pos: position,
-      radius: 10,
+      type: "NONE",
+      pos: position
     }
     this.onCollisionWith = () => { };
 
@@ -14,7 +13,7 @@ class Node {
     this.angularVelocity = 0;
 
     this.gravity = false;
-    this.velocity = new Vector(0, -10);
+    this.velocity = new Vector(0, 0);
     this.turnspeed = 3;
   }
 }

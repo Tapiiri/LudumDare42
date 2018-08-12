@@ -49,6 +49,7 @@ class Plane {
     this.addGameObject = addGameObject;
 
     this.nodeLinkWaiting = false;
+    this.startNode = null;
 
   }
 
@@ -102,20 +103,20 @@ class Plane {
   }
 
   dropNode() {
-    if (this.nodeLinkWaiting) {
-      this.addGameObject(new Node(this.collision.pos, false));
+    if (!this.nodeLinkWaiting) {
+      this.startNode = new Node(this.collision.pos, this);
+      this.addGameObject(this.startNode);
       this.controlState.endNodeLink = false;
       this.controlState.beginNodeLink = false;
-      this.nodeLinkWaiting = false;
-    } else {
-      this.addGameObject(new Node(this.collision.pos, false));
-      this.controlState.beginNodeLink = false;
-      this.controlState.endNodeLink = false;
       this.nodeLinkWaiting = true;
+    } else {
+      const endNode = new Node(this.collision.pos, false);
+      this.addGameObject(endNode);
+      this.addGameObject(new Line(this.startNode, endNode, this));
+      this.controlState.beginNodeLink = false;
+      this.controlState.endNodeLink = false;
+      this.nodeLinkWaiting = false;
     }
-  }
-
-  dropEndNode() {
   }
 
   focusTick(ev) {
