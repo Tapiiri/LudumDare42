@@ -1,11 +1,5 @@
 function init() {
   const stageCanvas = document.getElementById('demoCanvas');
-  const resize = () => {
-    stageCanvas.width = stageCanvas.clientWidth;
-    stageCanvas.height = stageCanvas.clientHeight;
-  };
-  window.addEventListener('resize', resize);
-  resize();
 
   let stage = new createjs.Stage('demoCanvas');
   /* gameObject contains:
@@ -37,7 +31,13 @@ function init() {
     gameObjects.splice(gosId, 1);
   };
 
-  addGameObject(new Plane(new Vector(-10, -10), true, addGameObject, removeGameObject));
+  addGameObject(new Plane(
+    new Vector(-10, -10),
+    true,
+    addGameObject,
+    removeGameObject,
+    new Vector(stageCanvas.width, stageCanvas.height)
+  ));
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);

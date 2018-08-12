@@ -6,8 +6,9 @@ let playerVelocity = new Vector(0, 10);
 let playerAcceleration = new Vector(0, 0);
 
 class Plane {
-  constructor(position, isPlayer, addGameObject, removeGameObject) {
+  constructor(position, isPlayer, addGameObject, removeGameObject, canvasSize) {
 
+    this.canvasSize = canvasSize;
     this.controlState = {
       left: false,
       right: false,
@@ -152,8 +153,8 @@ class Plane {
 
   focusCamera() {
     cameraOffset = new Vector(
-      $(window).width() / 2 - this.collision.pos.x,
-      $(window).height() / 2 - this.collision.pos.y);
+      this.canvasSize.x / 2 - this.collision.pos.x,
+      this.canvasSize.y / 2 - this.collision.pos.y);
   }
 
   Tick(ev) {
