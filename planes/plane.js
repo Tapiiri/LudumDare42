@@ -12,14 +12,15 @@ class Plane {
       shoot: false,
     }
     this.onTick = this.Tick;
-    
+
     if (!isPlayer) {
-      setShip( this );
+      this.isPlayer = true;
+      setShip(this);
       this.controlState.left = true;
       this.controlState.up = true;
     }
     else {
-      setPlayerShip( this );
+      setPlayerShip(this);
       this.onTick = this.focusTick;
     }
 
@@ -38,10 +39,10 @@ class Plane {
     this.acceleration = new Vector(0, 0)
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
     this.angularVelocity = 0;
-    
+
   }
 
-  turn( d ) {
+  turn(d) {
     this.angularVelocity = d * this.turnspeed;
   }
 
@@ -49,22 +50,22 @@ class Plane {
     this.accelerationMagnitude = accelerationMagnitude
   }
 
-  controls(){
-    if (this.controlState.left == this.controlState.right){
+  controls() {
+    if (this.controlState.left == this.controlState.right) {
       this.turn(0);
     }
-    else if (this.controlState.left){
+    else if (this.controlState.left) {
       this.turn(-1);
     }
-    else if (this.controlState.right){
+    else if (this.controlState.right) {
       this.turn(1)
     }
 
-    if (this.controlState.up){
-      this.accelerate( this.boostAcceleration )
+    if (this.controlState.up) {
+      this.accelerate(this.boostAcceleration)
     }
     else {
-      this.accelerate( this.defaultAcceleration )
+      this.accelerate(this.defaultAcceleration)
     }
   }
 
@@ -75,39 +76,43 @@ class Plane {
 
   focusCamera() {
     cameraOffset = new Vector(
-                    $(window).width() / 2 - this.collision.pos.x, 
-                    $(window).height() / 2, this.collision.pos.y);
+      $(window).width() / 2 - this.collision.pos.x,
+      $(window).height() / 2 - this.collision.pos.y);
   }
-  
-  Tick(ev) {    
+
+  Tick(ev) {
     this.controls()
 
     applyAngularVelocity(this, ev.delta);
     this.graphics.rotation = radToDeg(this.rotation);
 
+
     // drag ~ velocity squared
     const dragCoefficient = 0.005;
     const dragMagnitude = -(this.velocity.toPolar().r ** 2 * dragCoefficient)
     const drag = this.velocity.unit().scalarMult(dragMagnitude);
-    this.acceleration = cameraAcceleration = Vector.fromPolar(
+    this.acceleration = Vector.fromPolar(
       this.accelerationMagnitude,
       this.rotation,
     ).add(drag);
+    if (this.isPlayer) {
+      //cameraAcceleration = this.acceleration;
+    }
   }
 }
 
 
-function setShip(ship){
+function setShip(ship) {
   const shipGraphics = new createjs.Shape();
   shipGraphics.graphics
-  .beginFill('Red')
-  .beginStroke('#000000')
-  .mt(0, -70)
-  .lt(50, 30)
-  .lt(-50, 30)
-  .lt(0, -70)
-  .beginFill('Red')
-  .drawCircle(0, 0, 10);
+    .beginFill('Red')
+    .beginStroke('#000000')
+    .mt(0, -70)
+    .lt(50, 30)
+    .lt(-50, 30)
+    .lt(0, -70)
+    .beginFill('Red')
+    .drawCircle(0, 0, 10);
 
   ship.graphics = shipGraphics;
   ship.collision = {

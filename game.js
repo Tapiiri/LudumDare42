@@ -83,7 +83,7 @@ function init() {
 
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
-    applyCameraAccelerationAndVelocity(ev.delta);
+    //applyCameraAccelerationAndVelocity(ev.delta);
     gameObjects.forEach(go => {
       go.onTick(ev, go);
       applyAcceleration(go, ev.delta);
