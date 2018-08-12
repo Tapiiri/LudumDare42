@@ -55,7 +55,9 @@ class Plane {
 
   calculateControls() {
     const desiredVelocity = playerPosition.substract(this.collision.pos)
-    const angleDiff = this.rotation - desiredVelocity.toPolar().phi;
+    const angleDiff = normaliseAngle(
+      this.rotation - desiredVelocity.toPolar().phi
+    );
     this.controlState = {};
     if (angleDiff > 0.3) {
       this.controlState.left = true;
@@ -145,7 +147,7 @@ class Plane {
 
 
     // drag ~ velocity squared
-    const dragCoefficient = 0.005;
+    const dragCoefficient = 0.002;
     const dragMagnitude = -(this.velocity.toPolar().r ** 2 * dragCoefficient)
     const drag = this.velocity.unit().scalarMult(dragMagnitude);
     this.acceleration = Vector.fromPolar(

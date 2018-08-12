@@ -98,7 +98,7 @@ function init() {
 
   stage.add;
 }
-const gravityAccelerationY = 80; // pixels / s^2
+const gravityAccelerationY = 160; // pixels / s^2
 
 function applyCameraAccelerationAndVelocity(deltaT) {
   cameraVelocity.y -= (gravityAccelerationY * deltaT) / 1000;
@@ -119,6 +119,7 @@ function applyVelocity(go, deltaT) {
 
 function applyAngularVelocity(go, deltaT) {
   go.rotation += go.angularVelocity * deltaT / 1000;
+  go.rotation = normaliseAngle(go.rotation);
 }
 
 function updateCameraCoords(go, cameraOffset) {
@@ -215,4 +216,8 @@ function circleToLineCollision(circ, line) {
   return false;
 }
 
-const radToDeg = rad => ((rad - 0.5 * Math.PI) * 180 / Math.PI) + 360
+const normaliseAngle = rad =>
+      rad < -Math.PI ? normaliseAngle(rad + 2 * Math.PI) :
+      rad > Math.PI ? normaliseAngle(rad - 2 * Math.PI) :
+      rad;
+const radToDeg = rad => (normaliseAngle(rad - 0.5 * Math.PI) * 180 / Math.PI)
