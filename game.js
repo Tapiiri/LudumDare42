@@ -57,7 +57,7 @@ function init() {
     }))
   }
 
-  addGameObject(new Plane(new Vector(100, 100), true));
+  addGameObject(new Plane(new Vector(-10, -10), true));
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);

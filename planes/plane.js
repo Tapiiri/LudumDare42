@@ -1,6 +1,9 @@
-let cameraOffset = new Vector(0, 0)
-let cameraAcceleration = new Vector(0, 0)
-let cameraVelocity = new Vector(0, 10)
+let cameraOffset = new Vector(0, 0);
+let cameraAcceleration = new Vector(0, 0);
+let cameraVelocity = new Vector(0, 10);
+let playerPosition = new Vector(0, 0);
+let playerVelocity = new Vector(0, 10);
+let playerAcceleration = new Vector(0, 0);
 
 class Plane {
   constructor(position, isPlayer) {
@@ -14,12 +17,12 @@ class Plane {
     this.onTick = this.Tick;
 
     if (!isPlayer) {
-      this.isPlayer = true;
       setShip(this);
-      this.controlState.left = true;
-      this.controlState.up = true;
+      this.isPlayer = false;
+      this.onTick = this.focusTick;
     }
     else {
+      this.isPlayer = true;
       setPlayerShip(this);
       this.onTick = this.focusTick;
     }
@@ -28,8 +31,8 @@ class Plane {
     this.graphics.y = position.y;
     this.collision.pos = position;
 
-    this.gravity = true
-    this.velocity = new Vector(0, -10)
+    this.gravity = true;
+    this.velocity = new Vector(0, -10);
     this.turnspeed = 3;
 
     this.defaultAcceleration = 10;
@@ -39,6 +42,22 @@ class Plane {
     this.acceleration = new Vector(0, 0)
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
     this.angularVelocity = 0;
+
+  }
+
+  calculateControls() {
+    const desiredVelocity = playerPosition.substract(this.collision.pos)
+    const steering = desiredVelocity.substract(this.velocity)
+    const angleDiff = this.rotation - desiredVelocity.toPolar().phi
+    console.log(angleDiff);
+    this.controlState = {};
+    if (angleDiff > 0.3) {
+      this.controlState.left = true;
+    } else if (angleDiff < -0.3) {
+      this.controlState.right = true;
+    } else {
+      this.controlState.up = true;
+    }
 
   }
 
@@ -70,7 +89,14 @@ class Plane {
   }
 
   focusTick(ev) {
-    this.focusCamera();
+    if (this.isPlayer) {
+      this.focusCamera();
+      playerVelocity = this.velocity;
+      playerAcceleration = this.acceleration;
+      playerPosition = this.collision.pos;
+    } else {
+      this.calculateControls()
+    }
     this.Tick(ev);
   }
 
@@ -95,9 +121,6 @@ class Plane {
       this.accelerationMagnitude,
       this.rotation,
     ).add(drag);
-    if (this.isPlayer) {
-      //cameraAcceleration = this.acceleration;
-    }
   }
 }
 
