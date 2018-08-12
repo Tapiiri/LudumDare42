@@ -101,6 +101,8 @@ class Plane {
 
     if (this.controlState.endNodeLink && this.nodeLinkWaiting) {
       this.dropNode();
+    } else {
+      this.controlState.endNodeLink = false;
     }
   }
 

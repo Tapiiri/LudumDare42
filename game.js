@@ -29,35 +29,6 @@ function init() {
     gameObjects.push(go);
   };
 
-  const backgroundColors = ["	#4deeea", "#74ee15", "#ffe700", "#f000ff", "#001eff"]
-  const borderColors = ["	#4deeea", "#74ee15", "#ffe700", "#f000ff", "#001eff"]
-
-  for (let index = 0; index < 50; index++) {
-    backgroundColors.forEach((f => {
-      borderColors.forEach(b => {
-        const ball = new createjs.Shape();
-        ball.graphics
-          .beginFill(f)
-          .beginStroke(b)
-          .drawCircle(0, 0, Math.random() * 100)
-        ball.x = Math.random() * $(window).width();
-        ball.y = Math.random() * $(window).height();
-        const ballObject = {
-          graphics: ball,
-          collision: {
-            type: "NONE",
-            pos: new Vector(Math.random() * 300, Math.random() * 300),
-          },
-          onTick: (ev, self) => ({}),
-          velocity: new Vector(0, 0),
-          acceleration: new Vector(0, 0),
-        };
-        addGameObject(ballObject);
-
-      })
-    }))
-  }
-
   addGameObject(new Plane(new Vector(-10, -10), true, addGameObject));
 
   const groundGraphics = new createjs.Shape();
