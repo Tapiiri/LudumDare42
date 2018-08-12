@@ -221,7 +221,6 @@ function circleToLineCollision(circ, line) {
   // If the parameter t is within (0, 1), the intersection is within the line segment
   const t1 = (-b + sqrtdisc) / (2 * a);
   const t2 = (-b - sqrtdisc) / (2 * a);
-  if ((-0.1 < t1 && t1 < 1.1) || -0.1 < t2 && t2 < 1.1) console.log(t1, t2)
   if ((0 < t1 && t1 < 1) || (0 < t2 && t2 < 1)) {
     return true;
   }
