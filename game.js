@@ -9,15 +9,17 @@ function init() {
 
   let stage = new createjs.Stage('demoCanvas');
   /* gameObject contains:
-  *   graphics - EaselJS DisplayObject
-  *   onTick - function (tick event, this gameObject)
-  *   init - (optional) function (this gameObject)
-  *   onCollisionWith - function (that gameObject, this gameObject)
-  *   gravity - Boolean whether to apply gravity
-  *   velocity - vector in pixels per second
-  *   acceleration - vector in pixels/s^2
-  *   collision - object consisting of pos (position), radius, and type ('CIRCLE' or 'NONE')
-  */
+   *   graphics - EaselJS DisplayObject
+   *   onTick - function (tick event, this gameObject)
+   *   init - (optional) function (this gameObject)
+   *   onCollisionWith - function (that gameObject, this gameObject)
+   *   gravity - Boolean whether to apply gravity
+   *   velocity - vector in pixels per second
+   *   acceleration - vector in pixels/s^2
+   *   collision - object consisting of pos (position), and type ('CIRCLE', 'LINE' or 'NONE')
+   *               type 'CIRCLE' should contain radius
+   *               type 'LINE' should have length and rotation
+   */
   const gameObjects = [];
   const addGameObject = function (go) {
     if (typeof go.init === 'function') {
@@ -67,14 +69,15 @@ function init() {
     onTick: (ev, self) => ({}),
     onCollisionWith: (that, self) => console.log('Ground collision!'),
     collision: {
-      type: "CIRCLE",
-      radius: 4,
+      type: "LINE",
+      length: 1000,
+      rotation: 0,
       pos: new Vector(100, 600),
     },
     velocity: new Vector(0, 0),
     acceleration: new Vector(0, 0),
   };
-  // addGameObject(ground);
+  addGameObject(ground);
 
   const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
@@ -125,32 +128,55 @@ function updateCameraCoords(go, cameraOffset) {
 }
 function checkCollisions(gos) {
   let i = -1;
-  const gosSortedByX = gos
-    .filter(go => go.collision.type !== 'NONE')
-    .sort((go1, go2) =>
-      (go1.graphics.x - go1.collision.radius) -
-      (go2.graphics.x - go2.collision.radius))
-    .map(go => { i += 1; return { i, go } })
-  const collisions = gosSortedByX.map(go1 => {
+  const circleGosSortedByX = gos
+        .filter(go => go.collision.type === 'CIRCLE')
+        .sort((go1, go2) =>
+            (go1.graphics.x - go1.collision.radius) -
+            (go2.graphics.x - go2.collision.radius))
+        .map(go => { i += 1; return { i, go } });
+
+  const lineGos = gos.filter(go => go.collision.type === 'LINE');
+
+  const circleCollisions = circleGosSortedByX.map(go1 => {
     let breakLoop = false;
     return {
       go1,
-      go2s: gosSortedByX.slice(go1.i + 1).map(go2 => {
+      go2s: circleGosSortedByX.slice(go1.i + 1).map(go2 => {
         if (breakLoop)
           return false;
-        if (go1.go.collision.type == "CIRCLE") {
-          if (go2.go.collision.type == "CIRCLE") {
-            if (circleToCircleCollision(go1.go.collision, go2.go.collision)) {
-              return go2.go;
-            } else {
-              breakLoop = true;
-            }
-          }
+        if (circleToCircleCollision(go1.go.collision, go2.go.collision)) {
+          return go2.go;
         }
+        breakLoop = true;
         return false;
       }).filter(go => go),
     };
   }).map(({ go1, go2s }) => { return { go1: go1.go, go2s } });
+
+  const circleLineCollisions = circleGosSortedByX.map(go => go.go)
+        .map((go1) => {
+          return {
+            go1,
+            go2s: lineGos.filter(
+              go2 => circleToLineCollision(go1.collision, go2.collision)
+            ),
+          }
+        });
+
+  const collisions = []
+  console.assert(
+    circleCollisions.length === circleLineCollisions.length,
+    'Collision lists not of equal length',
+  )
+  for (let i = 0; i < circleCollisions.length; ++i) {
+    console.assert(
+      circleCollisions[i].go1 === circleLineCollisions[i].go1,
+      'Collision lists out of order'
+    );
+    const go1 = circleCollisions[i].go1;
+    const go2s = circleCollisions[i].go2s.concat(circleLineCollisions[i].go2s);
+    collisions.push({ go1, go2s });
+  }
 
   collisions.forEach(({ go1, go2s }) => go2s.forEach(go2 => {
     go1.onCollisionWith(go2, go1);
@@ -163,6 +189,30 @@ function circleToCircleCollision(circ0, circ1) {
   const radiiSum = circ0.radius + circ1.radius;
   const distance = circ0.pos.substract(circ1.pos).toPolar().r;
   return radiiSum > distance;
+}
+
+function circleToLineCollision(circ, line) {
+  // https://math.stackexchange.com/questions/275529/check-if-line-intersects-with-circles-perimeter
+  // ryu jin's answer (Accepted answer is wrong!)
+  // Move coordinates s.t. circle is at origin
+  const lineStart = line.pos.substract(circ.pos);
+  const lineVector = Vector.fromPolar(line.length, line.rotation);
+  // Quadratic formula
+  const a = line.length ** 2;
+  const b = 2 * (lineStart.x * lineVector.x + lineStart.y * lineVector.y);
+  const c = (lineStart.toPolar().r ** 2) - (circ.radius ** 2);
+  const discriminant = b ** 2 - 4*a*c;
+  if (discriminant <= 0) {
+    return false;
+  }
+  const sqrtdisc = Math.sqrt(discriminant);
+  // If the parameter t is within (0, 1), the intersection is within the line segment
+  const t1 = (-b + sqrtdisc) / (2 * a);
+  const t2 = (-b - sqrtdisc) / (2 * a);
+  if ((0 < t1 && t1 < 1) || (0 < t2 && t2 < 1)) {
+    return true;
+  }
+  return false;
 }
 
 const radToDeg = rad => ((rad - 0.5 * Math.PI) * 180 / Math.PI) + 360
