@@ -32,7 +32,7 @@ function init() {
   };
 
   addGameObject(new Plane(
-    new Vector(-10, -10),
+    new Vector(-10, -100),
     true,
     addGameObject,
     removeGameObject,
@@ -51,7 +51,7 @@ function init() {
       type: "LINE",
       length: 1000,
       rotation: 0,
-      pos: new Vector(100, 600),
+      pos: new Vector(0, 0),
     },
     velocity: new Vector(0, 0),
     acceleration: new Vector(0, 0),
@@ -60,7 +60,7 @@ function init() {
 
   const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
-    addGameObject(new Plane(new Vector(Math.random() * 300, Math.random() * 300), false, addGameObject, removeGameObject));
+    addGameObject(new Plane(new Vector(Math.random() * 300, -Math.random() * 300), false, addGameObject, removeGameObject));
   });
 
   createjs.Ticker.addEventListener('tick', onTick);
@@ -78,6 +78,7 @@ function init() {
   stage.add;
 }
 const gravityAccelerationY = 160; // pixels / s^2
+const reboundGravityY = -gravityAccelerationY;
 
 function applyCameraAccelerationAndVelocity(deltaT) {
   cameraVelocity.y -= (gravityAccelerationY * deltaT) / 1000;
@@ -87,7 +88,9 @@ function applyCameraAccelerationAndVelocity(deltaT) {
 
 function applyAcceleration(go, deltaT) {
   if (go.gravity) {
-    go.velocity.y += (gravityAccelerationY * deltaT) / 1000;
+    go.velocity.y += (
+      (go.collision.pos.y <= 0 ? gravityAccelerationY : reboundGravityY)
+        * deltaT) / 1000;
   }
   go.velocity = go.velocity.add(go.acceleration.scalarMult(deltaT / 1000));
 }

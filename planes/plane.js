@@ -41,7 +41,7 @@ class Plane {
 
     this.defaultAcceleration = 10;
     this.boostAcceleration = 1000;
-    this.accelerationMagnitude = this.defaultAcceleration;
+    this.power = this.defaultAcceleration;
 
     this.acceleration = new Vector(0, 0)
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
@@ -76,8 +76,8 @@ class Plane {
     this.angularVelocity = d * this.turnspeed;
   }
 
-  accelerate(accelerationMagnitude) {
-    this.accelerationMagnitude = accelerationMagnitude
+  setPower(power) {
+    this.power = power;
   }
 
   controls() {
@@ -92,10 +92,10 @@ class Plane {
     }
 
     if (this.controlState.up) {
-      this.accelerate(this.boostAcceleration)
+      this.setPower(this.boostAcceleration)
     }
     else {
-      this.accelerate(this.defaultAcceleration)
+      this.setPower(this.defaultAcceleration)
     }
 
     if (this.controlState.beginNodeLink && !this.nodeLinkWaiting && !this.controlState.endNodeLink) {
@@ -165,11 +165,26 @@ class Plane {
 
 
     // drag ~ velocity squared
-    const dragCoefficient = 0.002;
+    const y = this.collision.pos.y;
+    const interfaceY = 10;
+    const airDragCoefficient = 0.002
+    const waterDragCoefficient = 0.04;
+    const dragCoefficient =
+          y <= -interfaceY ?
+          airDragCoefficient :
+          y <= interfaceY ?
+          airDragCoefficient + ((y + interfaceY) / (2 * interfaceY)) * waterDragCoefficient :
+          airDragCoefficient + waterDragCoefficient;
+
     const dragMagnitude = -(this.velocity.toPolar().r ** 2 * dragCoefficient)
     const drag = this.velocity.unit().scalarMult(dragMagnitude);
+
+    // Decrease power with increasing altitude
+    const powerDecay = 0.002;
+    const totalPower = this.power *
+          (1 - Math.tanh(powerDecay * Math.abs(this.collision.pos.y)));
     this.acceleration = Vector.fromPolar(
-      this.accelerationMagnitude,
+      totalPower,
       this.rotation,
     ).add(drag);
   }
