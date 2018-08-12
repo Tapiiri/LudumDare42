@@ -56,7 +56,13 @@ function init() {
   wallGraphics.y = 0;
   const wallPrototype = {
     onTick: (ev, self) => ({}),
-    onCollisionWith: (that, self) => console.log('Wall collision!'),
+    onCollisionWith: (that, self) => {
+      const elasticity = 1;
+      that.velocity = that.velocity.scalarMult(elasticity);
+      that.velocity.x = -that.velocity.x;
+      that.acceleration.x = -that.acceleration.x;
+      that.rotation = that.velocity.toPolar().phi;
+    },
     collision: {
       type: 'LINE',
       length: 5000,
@@ -79,7 +85,7 @@ function init() {
   });
 
   addGameObject(new Plane(
-    new Vector(-10, -100),
+    new Vector(50, 0),
     true,
     addGameObject,
     removeGameObject,
@@ -215,6 +221,7 @@ function circleToLineCollision(circ, line) {
   // If the parameter t is within (0, 1), the intersection is within the line segment
   const t1 = (-b + sqrtdisc) / (2 * a);
   const t2 = (-b - sqrtdisc) / (2 * a);
+  if ((-0.1 < t1 && t1 < 1.1) || -0.1 < t2 && t2 < 1.1) console.log(t1, t2)
   if ((0 < t1 && t1 < 1) || (0 < t2 && t2 < 1)) {
     return true;
   }
