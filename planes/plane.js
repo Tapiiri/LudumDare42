@@ -4,16 +4,6 @@ let cameraVelocity = new Vector(0, 10)
 
 class Plane {
   constructor(position, isPlayer) {
-    if (!isPlayer) {
-      setShip( this );
-    }
-    else {
-      setPlayerShip( this );
-    }
-
-    this.graphics.x = position.x;
-    this.graphics.y = position.y;
-    this.collision.pos = position;
 
     this.controlState = {
       left: false,
@@ -21,8 +11,21 @@ class Plane {
       up: false,
       shoot: false,
     }
+    this.onTick = this.Tick;
+    
+    if (!isPlayer) {
+      setShip( this );
+      this.controlState.left = true;
+      this.controlState.up = true;
+    }
+    else {
+      setPlayerShip( this );
+      this.onTick = this.focusTick;
+    }
 
-    cameraOffset = new Vector($(window).width() / 2 - position.x, $(window).height() / 2, position.y);
+    this.graphics.x = position.x;
+    this.graphics.y = position.y;
+    this.collision.pos = position;
 
     this.gravity = true
     this.velocity = new Vector(0, -10)
@@ -35,8 +38,7 @@ class Plane {
     this.acceleration = new Vector(0, 0)
     this.rotation = 0 // radians, 0 towards the right, grows counterclockwise
     this.angularVelocity = 0;
-
-    addControls(this);
+    
   }
 
   turn( d ) {
@@ -47,7 +49,7 @@ class Plane {
     this.accelerationMagnitude = accelerationMagnitude
   }
 
-  contorls(){
+  controls(){
     if (this.controlState.left == this.controlState.right){
       this.turn(0);
     }
@@ -66,9 +68,19 @@ class Plane {
     }
   }
 
-  onTick(ev) {
-    
-    this.contorls()
+  focusTick(ev) {
+    this.focusCamera();
+    this.Tick(ev);
+  }
+
+  focusCamera() {
+    cameraOffset = new Vector(
+                    $(window).width() / 2 - this.collision.pos.x, 
+                    $(window).height() / 2, this.collision.pos.y);
+  }
+  
+  Tick(ev) {    
+    this.controls()
 
     applyAngularVelocity(this, ev.delta);
     this.graphics.rotation = radToDeg(this.rotation);
@@ -88,7 +100,7 @@ class Plane {
 function setShip(ship){
   const shipGraphics = new createjs.Shape();
   shipGraphics.graphics
-  .beginFill('Green')
+  .beginFill('Red')
   .beginStroke('#000000')
   .mt(0, -70)
   .lt(50, 30)

@@ -14,8 +14,9 @@ function setPlayerShip(ship){
   ship.collision = {
     type: "CIRCLE",
     collisionRadius: 10,
-    pos: position
   }
+
+  addControls(ship);
 }
 
 function addControls(player){
@@ -47,3 +48,33 @@ function addControls(player){
   });
 
 }
+
+/*
+     = {
+      collision: {
+        type: "CIRCLE",
+        collisionRadius: 4,
+        pos: new Vector(Math.random() * 300, Math.random() * 300),
+      },
+      graphics: enemyGraphics,
+      onTick: (ev, self) => {
+        self.velocity.x += 5 * Math.sin(0.005 * ev.time);
+        self.velocity.y += 5 * Math.cos(0.005 * ev.time);
+      },
+      gravity: false,
+      velocity: new Vector(10, 10),
+      acceleration: new Vector(0, 0),
+    };
+
+        enemyGraphics.graphics
+      .beginFill('Violet')
+      .beginStroke('#000000')
+      .mt(size / 2, 0)
+      .lt(size, size)
+      .lt(0, size)
+      .lt(size / 2, 0)
+      .beginFill('Red')
+      .drawCircle(0, 0, 4);
+
+
+*/

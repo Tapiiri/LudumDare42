@@ -57,7 +57,7 @@ function init() {
     }))
   }
 
-  addGameObject(new Plane(new Vector(100, 100)));
+  addGameObject(new Plane(new Vector(100, 100), true));
 
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
@@ -78,44 +78,17 @@ function init() {
 
   const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
-    const size = enemy.size;
-    const enemyGraphics = new createjs.Shape();
-    enemyGraphics.graphics
-      .beginFill('Violet')
-      .beginStroke('#000000')
-      .mt(size / 2, 0)
-      .lt(size, size)
-      .lt(0, size)
-      .lt(size / 2, 0)
-      .beginFill('Red')
-      .drawCircle(0, 0, 4);
-    enemyGraphics.x = 0;
-    enemyGraphics.y = 0;
-    const enemyObject = {
-      collision: {
-        type: "CIRCLE",
-        collisionRadius: 4,
-        pos: new Vector(Math.random() * 300, Math.random() * 300),
-      },
-      graphics: enemyGraphics,
-      onTick: (ev, self) => {
-        self.velocity.x += 5 * Math.sin(0.005 * ev.time);
-        self.velocity.y += 5 * Math.cos(0.005 * ev.time);
-      },
-      gravity: false,
-      velocity: new Vector(10, 10),
-      acceleration: new Vector(0, 0),
-    };
-    addGameObject(enemyObject);
+    addGameObject(new Plane(new Vector(Math.random() * 300, Math.random() * 300), false));
   });
+
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
     applyCameraAccelerationAndVelocity(ev.delta);
     gameObjects.forEach(go => {
+      go.onTick(ev, go);
       applyAcceleration(go, ev.delta);
       applyVelocity(go, ev.delta);
       updateCameraCoords(go, cameraOffset);
-      go.onTick(ev, go);
     });
     stage.update();
   }
