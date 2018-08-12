@@ -99,6 +99,10 @@ class Plane {
       //cameraAcceleration = this.acceleration;
     }
   }
+
+  onCollisionWith(that) {
+    console.log(this, 'collided with', that);
+  }
 }
 
 

@@ -10,13 +10,13 @@ function init() {
   let stage = new createjs.Stage('demoCanvas');
   /* gameObject contains:
    *   graphics - EaselJS DisplayObject
-   *   position - vector in world coords
    *   onTick - function (tick event, this gameObject)
    *   init - (optional) function (this gameObject)
+   *   onCollisionWith - function (that gameObject, this gameObject)
    *   gravity - Boolean whether to apply gravity
    *   velocity - vector in pixels per second
    *   acceleration - vector in pixels/s^2
-   *   hitbox - ???
+   *   collision - object consisting of pos (position), radius, and type ('CIRCLE' or 'NONE')
    */
   const gameObjects = [];
   function addGameObject(go) {
@@ -65,6 +65,7 @@ function init() {
   const ground = {
     graphics: groundGraphics,
     onTick: (ev, self) => ({}),
+    onCollisionWith: (that, self) => console.log('Ground collision!'),
     collision: {
       type: "CIRCLE",
       radius: 4,
@@ -134,13 +135,13 @@ function checkCollisions(gos) {
     let breakLoop = false;
     return {
       go1,
-      go2: gosSortedByX.slice(go1.i + 1).map(go2 => {
+      go2s: gosSortedByX.slice(go1.i + 1).map(go2 => {
         if (breakLoop)
           return false;
         if (go1.go.collision.type == "CIRCLE") {
           if (go2.go.collision.type == "CIRCLE") {
             if (circleToCircleCollision(go1.go.collision, go2.go.collision)) {
-              return go2;
+              return go2.go;
             } else {
               breakLoop = true;
             }
@@ -149,9 +150,12 @@ function checkCollisions(gos) {
         return false;
       }).filter(go => go),
     };
-  }).map(({ go1, go2 }) => { return { go1: go1, go2 } });
-  if (collisions.filter(coll => coll.go2.length !== 0).length !== 0) console.log('collision!', collisions)
-  return collisions;
+  }).map(({ go1, go2s }) => { return { go1: go1.go, go2s } });
+
+  collisions.forEach(({ go1, go2s }) => go2s.forEach(go2 => {
+    go1.onCollisionWith(go2, go1);
+    go2.onCollisionWith(go1, go2);
+  }));
 }
 
 
