@@ -168,7 +168,7 @@ class Plane {
     const y = this.collision.pos.y;
     const interfaceY = 10;
     const airDragCoefficient = 0.002
-    const waterDragCoefficient = 0.04;
+    const waterDragCoefficient = 0.008;
     const dragCoefficient =
       y <= -interfaceY ?
         airDragCoefficient :

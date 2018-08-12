@@ -31,14 +31,6 @@ function init() {
     gameObjects.splice(gosId, 1);
   };
 
-  addGameObject(new Plane(
-    new Vector(-10, -100),
-    true,
-    addGameObject,
-    removeGameObject,
-    new Vector(stageCanvas.width, stageCanvas.height)
-  ));
-
   const groundGraphics = new createjs.Shape();
   groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
   groundGraphics.x = 0;
@@ -58,10 +50,41 @@ function init() {
   };
   addGameObject(ground);
 
+  const wallGraphics = new createjs.Shape();
+  wallGraphics.graphics.beginFill('Black').drawRect(-25, 0, 25, -5000);
+  wallGraphics.x = 0;
+  wallGraphics.y = 0;
+  const wallPrototype = {
+    onTick: (ev, self) => ({}),
+    onCollisionWith: (that, self) => console.log('Wall collision!'),
+    collision: {
+      type: 'LINE',
+      length: 5000,
+      rotation: -0.5 * Math.PI,
+    },
+    velocity: new Vector(0, 0),
+    acceleration: new Vector(0, 0),
+  }
+  const wall1 = $.extend(true, { graphics: wallGraphics.clone(true) }, wallPrototype);
+  const wall2 = Object.assign(true, { graphics: wallGraphics.clone(true) }, wallPrototype);
+  Object.assign(wall1.collision, { pos: new Vector(0, 2000) });
+  Object.assign(wall2.collision, { pos: new Vector(2000, 2000) });
+  console.log(wall1.collision);
+  addGameObject(wall1);
+  addGameObject(wall2);
+
   const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
     addGameObject(new Plane(new Vector(Math.random() * 300, -Math.random() * 300), false, addGameObject, removeGameObject));
   });
+
+  addGameObject(new Plane(
+    new Vector(-10, -100),
+    true,
+    addGameObject,
+    removeGameObject,
+    new Vector(stageCanvas.width, stageCanvas.height)
+  ));
 
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
