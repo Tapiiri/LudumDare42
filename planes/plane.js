@@ -122,6 +122,10 @@ class Plane {
       this.rotation,
     ).add(drag);
   }
+
+  onCollisionWith(that) {
+    console.log(this, 'collided with', that);
+  }
 }
 
 
@@ -140,6 +144,6 @@ function setShip(ship) {
   ship.graphics = shipGraphics;
   ship.collision = {
     type: "CIRCLE",
-    collisionRadius: 10,
+    radius: 10,
   }
 }

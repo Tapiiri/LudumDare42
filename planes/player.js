@@ -13,7 +13,7 @@ function setPlayerShip(ship){
   ship.graphics = shipGraphics;
   ship.collision = {
     type: "CIRCLE",
-    collisionRadius: 10,
+    radius: 10,
   }
 
   addControls(ship);
