@@ -117,6 +117,6 @@ function setShip(ship) {
   ship.graphics = shipGraphics;
   ship.collision = {
     type: "CIRCLE",
-    collisionRadius: 10,
+    radius: 10,
   }
 }
