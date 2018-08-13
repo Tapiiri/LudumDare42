@@ -15,12 +15,14 @@ function init() {
    *               type 'LINE' should have length and rotation
    */
   const gameObjects = [];
+  const newGameObjects = [];
+
   const addGameObject = function (go) {
     if (typeof go.init === 'function') {
       go.init(go);
     }
     stage.addChild(go.graphics);
-    gameObjects.push(go);
+    newGameObjects.push(go);
   };
   const removeGameObject = function (go) {
     if (typeof go.onDestroy === 'function') {
@@ -31,8 +33,30 @@ function init() {
     gameObjects.splice(gosId, 1);
   };
 
+  const bgrGraphics = new createjs.Shape();
+  const size = 250
+  for (a = 0; a < 40; a++) {
+    for (b = 0; b < 10; b++) {
+      bgrGraphics.graphics.beginFill((a+b)%2?'Gray':'DarkGray').drawRect(a*size, b*size, size, size);
+    }
+  }
+  bgrGraphics.x = 0;
+  bgrGraphics.y = 0;
+  const bgr = {
+    graphics: bgrGraphics,
+    onTick: (ev, self) => ({}),
+    collision: {
+      type: "NONE",
+      rotation: 0,
+      pos: new Vector(0, -1000),
+    },
+    velocity: new Vector(0, 0),
+    acceleration: new Vector(0, 0),
+  };
+  addGameObject(bgr);
+
   const groundGraphics = new createjs.Shape();
-  groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 10000, 100);
+  groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 4000, 100);
   groundGraphics.x = 0;
   groundGraphics.y = 0;
   const ground = {
@@ -74,6 +98,15 @@ function init() {
     gameObjects.forEach(go => {
       go.onTick(ev, go);
     });
+
+    newGameObjects.forEach(go => {
+      applyAcceleration(go, ev.delta);
+      applyVelocity(go, ev.delta);
+      updateCameraCoords(go, cameraOffset);
+      go.onTick(ev, go);
+      gameObjects.push(go);
+    });
+    newGameObjects.length = 0;
     stage.update();
   }
 

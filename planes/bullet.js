@@ -18,7 +18,7 @@ class Bullet {
 
     this.collision = {
       type: "CIRCLE",
-      pos: parent.collision.pos,
+      pos: parent.collision.pos.add(Vector.fromPolar(10, parent.rotation)),
       radius: 10,
       damage: 20
     }
