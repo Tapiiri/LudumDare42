@@ -14,7 +14,8 @@ class Plane {
       right: false,
       up: false,
       beginNodeLink: false,
-      endNodeLink: false
+      endNodeLink: false,
+      shoot: false
     }
     this.onTick = this.Tick;
 
@@ -40,7 +41,7 @@ class Plane {
     this.turnspeed = 3;
 
     this.defaultAcceleration = 10;
-    this.boostAcceleration = 1000;
+    this.boostAcceleration = 5000;
     this.power = this.defaultAcceleration;
 
     this.acceleration = new Vector(0, 0)
@@ -54,19 +55,27 @@ class Plane {
     this.startNode = null;
     this.nodeLinePairs = [];
 
+    this.fireRate = 200;
+    this.canFire = 1; //true
+
   }
 
   calculateControls() {
-    const desiredVelocity = playerPosition.substract(this.collision.pos)
+    const desiredVelocity = playerPosition.add(playerVelocity.add(playerAcceleration).scalarMult(2)).substract(this.collision.pos)
     const angleDiff = normaliseAngle(
       this.rotation - desiredVelocity.toPolar().phi
     );
     this.controlState = {};
     if (angleDiff > 0.3) {
+      this.controlState.endNodeLink = true;
       this.controlState.left = true;
     } else if (angleDiff < -0.3) {
+      this.controlState.endNodeLink = true;
       this.controlState.right = true;
     } else {
+      if (desiredVelocity.toPolar().r < 100) {
+        this.controlState.beginNodeLink = true;
+      }
       this.controlState.up = true;
     }
 
@@ -107,6 +116,10 @@ class Plane {
     } else {
       this.controlState.endNodeLink = false;
     }
+
+    if (this.controlState.shoot && this.canFire > 0) {
+      this.shootBullet();
+    }
   }
 
   dropNode() {
@@ -137,6 +150,13 @@ class Plane {
       this.removeGameObject(go);
     })
     this.nodeLinePairs.splice(index, 1);
+  }
+
+  shootBullet() {
+    console.log(this.canFire);
+    const newBullet = new Bullet(this);
+    this.addGameObject(newBullet);
+    this.canFire = -this.fireRate;
   }
 
   focusTick(ev) {
@@ -187,6 +207,8 @@ class Plane {
       totalPower,
       this.rotation,
     ).add(drag);
+
+    this.canFire += ev.delta;
   }
 
   onCollisionWith(that) {

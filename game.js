@@ -77,7 +77,7 @@ function init() {
 
   stage.add;
 }
-const gravityAccelerationY = 160; // pixels / s^2
+const gravityAccelerationY = 320; // pixels / s^2
 const reboundGravityY = -gravityAccelerationY;
 const outOfBoundsGravityX = 1010;
 const leftBoundsX = 0;
@@ -93,12 +93,12 @@ function applyAcceleration(go, deltaT) {
   if (go.gravity) {
     go.velocity.y += (
       (go.collision.pos.y <= 0 ? gravityAccelerationY : reboundGravityY)
-        * deltaT) / 1000;
+      * deltaT) / 1000;
     go.velocity.x += (
       (
         go.collision.pos.x < leftBoundsX ? outOfBoundsGravityX :
-        go.collision.pos.x > rightBoundsX ? -outOfBoundsGravityX :
-        0
+          go.collision.pos.x > rightBoundsX ? -outOfBoundsGravityX :
+            0
       ) * deltaT / 1000
     );
   }

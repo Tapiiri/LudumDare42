@@ -34,6 +34,9 @@ function addControls(player) {
       case ' ':
         player.controlState.beginNodeLink = true;
         break;
+      case 'x':
+        player.controlState.shoot = true;
+        break;
     }
   });
   document.addEventListener('keyup', (ev) => {
@@ -49,6 +52,9 @@ function addControls(player) {
         break;
       case ' ':
         player.controlState.endNodeLink = true;
+        break;
+      case 'x':
+        player.controlState.shoot = false;
         break;
     }
   });
