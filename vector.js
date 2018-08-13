@@ -34,4 +34,8 @@ class Vector {
     const phi = this.toPolar().phi;
     return Vector.fromPolar(1, phi);
   }
+
+  copy() {
+    return new Vector(this.x, this.y);
+  }
 }

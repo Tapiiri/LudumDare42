@@ -40,6 +40,8 @@ function init() {
       bgrGraphics.graphics.beginFill((a+b)%2?'Gray':'DarkGray').drawRect(a*size, b*size, size, size);
     }
   }
+  bgrGraphics.cache(0, 0, size*40, size*10);
+
   bgrGraphics.x = 0;
   bgrGraphics.y = 0;
   const bgr = {
@@ -87,6 +89,7 @@ function init() {
     new Vector(stageCanvas.width, stageCanvas.height)
   ));
 
+  createjs.Ticker.setFPS(60);
   createjs.Ticker.addEventListener('tick', onTick);
   function onTick(ev) {
     checkCollisions(gameObjects);

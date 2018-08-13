@@ -33,7 +33,7 @@ class Bullet {
     this.createdAt = 0;
 
     this.gravity = true;
-    this.velocity = Vector.fromPolar(1000, parent.rotation).add(parent.velocity);
+    this.velocity = Vector.fromPolar(2000, parent.rotation).add(parent.velocity);
     this.turnspeed = 3;
   }
 }
@@ -48,12 +48,21 @@ class BulletGraphic {
       if (this.createdAt >= this.lifeSpan) {
         parent.removeGameObject(this)
       }
+      else{
+        this.color = 100 + 155 * (this.lifeSpan - this.createdAt) / this.lifeSpan;
+        this.setBulletGraphics();
+      }
     };
-    this.graphics = setBulletGraphics( parent.lastPos.substract(parent.collision.pos) );
+    this.width = 4;
+    this.color = 255;
+    this.from = parent.lastPos;
+    this.to = parent.collision.pos;
+    this.graphics = new createjs.Shape();
+    this.setBulletGraphics();
 
     this.collision = {
       type: "None",
-      pos: parent.collision.pos
+      pos: new Vector(0, 0)
     }
 
     this.rotation = parent.rotation
@@ -63,15 +72,14 @@ class BulletGraphic {
     this.velocity = new Vector(0, 0);
     this.acceleration = new Vector(0, 0)
     this.gravity = false;
-  }
-}
 
-function setBulletGraphics(to) {
-  const bulletGraphics = new createjs.Shape();
-  bulletGraphics.graphics
-    .beginStroke('#FFFF00')
-    .setStrokeStyle(4)
-    .moveTo(0,0)
-    .lineTo(to.x,to.y);
-  return bulletGraphics;
+  }
+
+  setBulletGraphics(){
+    this.graphics.graphics
+      .beginStroke(`rgba(${this.color}, ${this.color}, 0, 1)`)
+      .setStrokeStyle(this.width)
+      .moveTo(this.from.x, this.from.y)
+      .lineTo(this.to.x, this.to.y);
+  }
 }

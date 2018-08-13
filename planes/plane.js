@@ -180,11 +180,10 @@ class Plane {
   }
 
   Tick(ev) {
-    this.controls()
-
     applyAngularVelocity(this, ev.delta);
     this.graphics.rotation = radToDeg(this.rotation);
 
+    this.controls()
 
     // drag ~ velocity squared
     const y = this.collision.pos.y;
