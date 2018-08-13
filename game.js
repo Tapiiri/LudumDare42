@@ -34,13 +34,13 @@ function init() {
   };
 
   const bgrGraphics = new createjs.Shape();
-  const size = 250
-  for (a = 0; a < 40; a++) {
-    for (b = 0; b < 10; b++) {
+  const size = 400
+  for (a = -20; a < 60; a++) {
+    for (b = -30; b < 40; b++) {
       bgrGraphics.graphics.beginFill((a+b)%2?'Gray':'DarkGray').drawRect(a*size, b*size, size, size);
     }
   }
-  bgrGraphics.cache(0, 0, size*40, size*10);
+  //bgrGraphics.cache(-20*size, -10*size, size*40, size*40);
 
   bgrGraphics.x = 0;
   bgrGraphics.y = 0;
@@ -58,7 +58,7 @@ function init() {
   addGameObject(bgr);
 
   const groundGraphics = new createjs.Shape();
-  groundGraphics.graphics.beginFill('Blue').drawRect(0, 0, 4000, 100);
+  groundGraphics.graphics.beginFill('Blue').drawRect(-4000, 0, 18000, 1000);
   groundGraphics.x = 0;
   groundGraphics.y = 0;
   const ground = {
@@ -91,7 +91,17 @@ function init() {
 
   createjs.Ticker.setFPS(60);
   createjs.Ticker.addEventListener('tick', onTick);
+  let counter = 0;
+  const treshold = 600;
   function onTick(ev) {
+    if(counter > treshold){
+      addGameObject(new Plane(new Vector(Math.random() * 300, -Math.random() * 300), false, addGameObject, removeGameObject));
+      counter = 0;
+    }
+    else{
+      counter +=1
+    }
+
     checkCollisions(gameObjects);
     gameObjects.forEach(go => {
       applyAcceleration(go, ev.delta);
@@ -115,11 +125,11 @@ function init() {
 
   stage.add;
 }
-const gravityAccelerationY = 320; // pixels / s^2
+const gravityAccelerationY = 1000; // pixels / s^2
 const reboundGravityY = -gravityAccelerationY;
-const outOfBoundsGravityX = 1010;
+const outOfBoundsGravityX = 3000;
 const leftBoundsX = 0;
-const rightBoundsX = 4000;
+const rightBoundsX = 8000;
 
 function applyCameraAccelerationAndVelocity(deltaT) {
   cameraVelocity.y -= (gravityAccelerationY * deltaT) / 1000;
@@ -145,6 +155,10 @@ function applyAcceleration(go, deltaT) {
 
 function applyVelocity(go, deltaT) {
   go.collision.pos = go.collision.pos.add(go.velocity.scalarMult(deltaT / 1000));
+  go.collision.pos.x = go.collision.pos.x % rightBoundsX
+  if (go.collision.pos.x < 0){
+    go.collision.pos.x = rightBoundsX
+  }
 }
 
 function applyAngularVelocity(go, deltaT) {
