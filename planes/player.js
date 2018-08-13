@@ -1,5 +1,6 @@
 function setPlayerShip(ship) {
-  const shipGraphics = new createjs.Shape();
+  const shipGraphics = new createjs.Bitmap("plane1.png");
+  /*new createjs.Shape();
   shipGraphics.graphics
     .beginFill('Green')
     .beginStroke('#000000')
@@ -9,7 +10,7 @@ function setPlayerShip(ship) {
     .lt(0, 50)
     .beginFill('Red')
     .drawCircle(0, 0, 10);
-
+  */
   ship.graphics = shipGraphics;
   ship.collision = {
     type: "CIRCLE",

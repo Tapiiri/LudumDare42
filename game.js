@@ -154,8 +154,12 @@ function applyAngularVelocity(go, deltaT) {
 
 function updateCameraCoords(go, cameraOffset) {
   const cameraCoords = go.collision.pos.add(cameraOffset);
-  go.graphics.x = cameraCoords.x;
-  go.graphics.y = cameraCoords.y;
+  if (go.cameraTransform){
+    go.cameraTransform(cameraCoords);
+  }
+  else{
+    go.graphics.setTransform(cameraCoords.x, cameraCoords.y);
+  }
 }
 function checkCollisions(gos) {
   let i = -1;

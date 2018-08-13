@@ -29,11 +29,11 @@ class Plane {
       setPlayerShip(this);
       this.onTick = this.playerTick;
     }
+    this.graphics.alpha = 1;
 
-    this.graphics.cache(-50, -50, 50 * 2, 50 * 2);
+    //this.graphics.cache(0, 0, this.graphics.width , this.graphics, 1, {gl: "new"});
+    this.graphics = this.graphics.setTransform(position.x, position.y);
 
-    this.graphics.x = position.x;
-    this.graphics.y = position.y;
     this.collision.pos = position;
 
     this.gravity = true;
@@ -61,7 +61,6 @@ class Plane {
     this.health = 100;
 
   }
-
   calculateControls() {
     const desiredVelocity = playerPosition.add(playerVelocity.add(playerAcceleration).scalarMult(2)).substract(this.collision.pos)
     const angleDiff = normaliseAngle(
@@ -173,6 +172,11 @@ class Plane {
     this.Tick(ev);
   }
 
+  cameraTransform(cam){
+    const side = Math.abs(this.rotation) > Math.PI / 2
+    this.graphics.setTransform(cam.x, cam.y, side?-1:1, 1);
+  }
+
   focusCamera() {
     cameraOffset = new Vector(
       this.canvasSize.x / 2 - this.collision.pos.x,
@@ -228,7 +232,8 @@ class Plane {
 
 
 function setShip(ship) {
-  const shipGraphics = new createjs.Shape();
+  const shipGraphics = new createjs.Bitmap("plane2.png");
+  /*new createjs.Shape();
   shipGraphics.graphics
     .beginFill('Red')
     .beginStroke('#000000')
@@ -238,7 +243,7 @@ function setShip(ship) {
     .lt(0, 50)
     .beginFill('Red')
     .drawCircle(0, 0, 10);
-
+  */
   ship.graphics = shipGraphics;
   ship.collision = {
     type: "CIRCLE",

@@ -15,10 +15,11 @@ class Bullet {
     };
     this.graphics = new createjs.Shape();
     //this.graphics.cache(-10, -10, 20, 20);
+    const side = Math.abs(parent.rotation) > Math.PI / 2
 
     this.collision = {
       type: "CIRCLE",
-      pos: parent.collision.pos.add(Vector.fromPolar(10, parent.rotation)),
+      pos: parent.collision.pos.add(Vector.fromPolar(82, parent.rotation)).add(Vector.fromPolar(side?16:-16, parent.rotation + Math.PI/4)),
       radius: 10,
       damage: 20
     }
