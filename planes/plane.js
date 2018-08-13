@@ -22,12 +22,12 @@ class Plane {
     if (!isPlayer) {
       setShip(this);
       this.isPlayer = false;
-      this.onTick = this.focusTick;
+      this.onTick = this.normalTick;
     }
     else {
       this.isPlayer = true;
       setPlayerShip(this);
-      this.onTick = this.focusTick;
+      this.onTick = this.playerTick;
     }
 
     this.graphics.cache(-50, -50, 50 * 2, 50 * 2);
@@ -155,21 +155,21 @@ class Plane {
   }
 
   shootBullet() {
-    console.log(this.canFire);
+    //console.log(this.canFire);
     const newBullet = new Bullet(this);
     this.addGameObject(newBullet);
     this.canFire = -this.fireRate;
   }
+  playerTick(ev){
+    this.focusCamera();
+    playerVelocity = this.velocity;
+    playerAcceleration = this.acceleration;
+    playerPosition = this.collision.pos;
+    this.Tick(ev);
+  }
 
-  focusTick(ev) {
-    if (this.isPlayer) {
-      this.focusCamera();
-      playerVelocity = this.velocity;
-      playerAcceleration = this.acceleration;
-      playerPosition = this.collision.pos;
-    } else {
-      this.calculateControls()
-    }
+  normalTick(ev) {
+    this.calculateControls()
     this.Tick(ev);
   }
 
@@ -217,7 +217,6 @@ class Plane {
     if (that.parent && that.parent.graphics.id === this.graphics.id)
       return;
     this.health -= that.collision.damage || 0;
-    console.log("Health left ", this.health);
     if (this.health <= 0) {
       this.removeGameObject(this);
     }

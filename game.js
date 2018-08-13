@@ -67,10 +67,12 @@ function init() {
   function onTick(ev) {
     checkCollisions(gameObjects);
     gameObjects.forEach(go => {
-      go.onTick(ev, go);
       applyAcceleration(go, ev.delta);
       applyVelocity(go, ev.delta);
       updateCameraCoords(go, cameraOffset);
+    });
+    gameObjects.forEach(go => {
+      go.onTick(ev, go);
     });
     stage.update();
   }
