@@ -1,5 +1,8 @@
 class Bullet {
   constructor(parent) {
+
+    this.parent = parent;
+
     this.onTick = (ev) => {
       this.createdAt += ev.delta;
       if (this.createdAt >= this.lifeSpan) {
@@ -9,8 +12,9 @@ class Bullet {
     this.graphics = setBulletGraphics("Red");
     this.collision = {
       type: "CIRCLE",
-      pos: parent.collision.pos,
-      radius: 10
+      pos: parent.collision.pos.add(Vector.fromPolar(20, parent.rotation)),
+      radius: 10,
+      damage: 20
     }
     this.onCollisionWith = () => { console.log("Bullet collision!") };
 

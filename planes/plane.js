@@ -58,6 +58,8 @@ class Plane {
     this.fireRate = 200;
     this.canFire = 1; //true
 
+    this.health = 100;
+
   }
 
   calculateControls() {
@@ -212,7 +214,17 @@ class Plane {
   }
 
   onCollisionWith(that) {
-    //console.log(this, 'collided with', that);
+    if (that.parent && that.parent.graphics.id === this.graphics.id)
+      return;
+    this.health -= that.collision.damage || 0;
+    console.log("Health left ", this.health);
+    if (this.health <= 0) {
+      this.removeGameObject(this);
+    }
+  }
+
+  onDestroy() {
+    console.log("Game over!")
   }
 }
 

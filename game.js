@@ -24,7 +24,7 @@ function init() {
   };
   const removeGameObject = function (go) {
     if (typeof go.onDestroy === 'function') {
-      go.onDestory(go);
+      go.onDestroy(go);
     }
     stage.removeChild(go.graphics);
     const gosId = gameObjects.findIndex(listGo => listGo.graphics.id === go.graphics.id);
@@ -50,7 +50,7 @@ function init() {
   };
   addGameObject(ground);
 
-  const enemies = [{ size: 50 }, { size: 10 }, { size: 10 }, { size: 10 }];
+  const enemies = [{ size: 50 }];//, { size: 10 }, { size: 10 }, { size: 10 }];
   enemies.forEach(enemy => {
     addGameObject(new Plane(new Vector(Math.random() * 300, -Math.random() * 300), false, addGameObject, removeGameObject));
   });
